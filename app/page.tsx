@@ -326,7 +326,7 @@ export default function Home() {
                   <p className="text-gray-400 mb-2">Download my CV to learn more about my experience</p>
                   <div className="flex justify-center">
                     <a
-                      href="https://drive.google.com/file/d/1xkjCoc_Uwjw4V63rDjTwG_bV8vsSgJfa/view?usp=drive_link"
+                      href="https://drive.google.com/file/d/1HDSo6OaQERaltgXz7Dscpw9806JYHH45/view?usp=sharing"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700"
