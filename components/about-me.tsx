@@ -7,6 +7,17 @@ import { Calendar, MapPin, Building2 } from "lucide-react"
 const timelineData = [
   {
     id: 1,
+    company: "Clone Futura",
+    role: "AI Agent Developer",
+    period: "Feb 2025 – present",
+    location: "Mumbai",
+    type: "Full time",
+    logo: "/placeholder.svg?height=64&width=64",
+    description:
+      "Designing and deploying intelligent AI agents using LangChain, RAG, vector databases, and APIs. Building scalable chatbot systems with Firebase integrations and optimizing deployment across Vercel, Render, and Replit. Work focuses on creating automation workflows and LLM-powered solutions that improve efficiency and scalability.",
+  },
+  {
+    id: 2,
     company: "IIT Dharwad",
     role: "Research Intern",
     period: "April 2024 – June 2024",
@@ -17,7 +28,7 @@ const timelineData = [
       "Developed an advanced gold price prediction model employing Deep Learning and NLP methods; integrated historical market data with sentiment analysis from 500+ news articles, achieving a predictive accuracy rate of 97.12%",
   },
   {
-    id: 2,
+    id: 3,
     company: "Zivaka LLP",
     role: "Junior Python and AI Developer",
     period: "February 2024 – June 2024",
@@ -28,7 +39,7 @@ const timelineData = [
       "Engineered AI-driven customer support systems, improving response efficiency by 20%, empowering cross-functional teams to streamline client interactions. Designed and deployed automation workflows for predictive analytics, optimizing decision-making processes in business operations.",
   },
   {
-    id: 3,
+    id: 4,
     company: "Ayodhaya Webosoft",
     role: "Junior Frontend Designer",
     period: "August 2023 – September 2023",
@@ -38,6 +49,7 @@ const timelineData = [
     description:
       "Crafted 15+ graphic layouts for web and mobile products, boosting visual communication efficiency by 30% and enhancing team collaboration on design projects.",
   },
+  
 ]
 
 const skillsData = {

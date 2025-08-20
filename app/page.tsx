@@ -59,7 +59,7 @@ export default function Home() {
               Hey! It's G. Kirtika
             </h1>
             <h2 className="text-xl md:text-2xl mb-8 text-gray-300">
-              🚀 AI Developer | Full-Stack Developer | Tech Explorer
+              🚀 AI Developer | Building Intelligent Agents | Tech Explorer
             </h2>
             <div className="flex flex-wrap justify-center gap-4">
               <ScrollLink to="work" smooth={true} duration={500}>
