@@ -16,6 +16,7 @@ import InteractiveShapes from "@/components/InteractiveShapes"
 import AnimatedBoxes from "@/components/AnimatedBoxes"
 import CertificateCard from "@/components/certificate-card"
 import PublicationCard from "@/components/publication-card"
+import ServicesSection from "@/components/services-section"
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
@@ -86,6 +87,9 @@ export default function Home() {
           <AboutMe />
         </div>
       </section>
+
+      {/* Services Section */}
+      <ServicesSection />
 
       {/* Work Section */}
       <section id="work" className="py-20 bg-gradient-to-b from-gray-900 to-black">
@@ -359,18 +363,24 @@ export default function Home() {
   )
 }
 
-function ProjectCard({ title, description, tags, link, period, image }) {
+interface ProjectCardProps {
+  title: string
+  description: string
+  tags: string[]
+  link?: string
+  period?: string
+  image?: string
+}
+
+function ProjectCard({ title, description, tags, link, period }: ProjectCardProps) {
   return (
     <div className="p-6 rounded-lg bg-gray-900 border border-gray-800 hover:border-purple-500 transition-all duration-300">
       <h3 className="text-xl font-bold mb-2 text-white text-center md:text-left">{title}</h3>
       {period && <p className="text-purple-400 mb-3 text-sm text-center md:text-left">{period}</p>}
       <p className="text-gray-400 mb-4 text-center md:text-left">{description}</p>
       <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-3">
-        {tags.map((tag, index) => (
-          <span
-            key={index}
-            className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300"
-          >
+        {tags.map((tag: string, index: number) => (
+          <span key={index} className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300">
             {tag}
           </span>
         ))}
