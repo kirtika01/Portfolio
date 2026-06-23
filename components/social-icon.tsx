@@ -1,6 +1,9 @@
+"use client"
+
 import type React from "react"
 import Link from "next/link"
 import type { ReactNode } from "react"
+import Magnetic from "@/components/magnetic"
 
 interface SocialIconProps {
   icon: ReactNode
@@ -12,14 +15,18 @@ interface SocialIconProps {
 
 export default function SocialIcon({ icon, href, label, className = "", onClick }: SocialIconProps) {
   return (
-    <Link
-      href={href}
-      aria-label={label}
-      className={`w-10 h-10 flex items-center justify-center rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 hover:from-purple-500 hover:to-pink-500 transition-all duration-300 ${className}`}
-      onClick={onClick}
-    >
-      <span className="text-white">{icon}</span>
-      <span className="sr-only">{label}</span>
-    </Link>
+    <Magnetic strength={0.5} className="inline-block">
+      <Link
+        href={href}
+        aria-label={label}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-all duration-300 hover:scale-110 hover:border-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:shadow-lg hover:shadow-purple-500/30 active:scale-95 ${className}`}
+        onClick={onClick}
+      >
+        <span>{icon}</span>
+        <span className="sr-only">{label}</span>
+      </Link>
+    </Magnetic>
   )
 }

@@ -1,22 +1,30 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Github, Linkedin, Twitter, MessageSquare, Smartphone, PenTool, Download, ExternalLink } from "lucide-react"
+import { motion, useTransform } from "framer-motion"
+import { Github, Linkedin, Download, ExternalLink, ArrowUpRight, Sparkles } from "lucide-react"
 import { Link as ScrollLink } from "react-scroll"
 import CustomCursor from "@/components/custom-cursor"
 import Navbar from "@/components/navbar"
 import SocialIcon from "@/components/social-icon"
-import { Button } from "@/components/ui/button"
 import AboutMe from "@/components/about-me"
 import Loading from "@/components/loading"
 import InteractiveShapes from "@/components/InteractiveShapes"
-import AnimatedBoxes from "@/components/AnimatedBoxes"
+import HeroBackground from "@/components/hero-background"
+import RoleRotator from "@/components/role-rotator"
+import SpotlightCard from "@/components/spotlight-card"
+import MagneticButton from "@/components/magnetic-button"
+import Reveal from "@/components/reveal"
 import CertificateCard from "@/components/certificate-card"
 import PublicationCard from "@/components/publication-card"
 import ServicesSection from "@/components/services-section"
+import BackToTop from "@/components/back-to-top"
+import { useParallax } from "@/hooks/use-parallax"
+
+const sectionTitle = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0 },
+}
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
@@ -26,64 +34,95 @@ export default function Home() {
     setMounted(true)
     const timer = setTimeout(() => {
       setLoading(false)
-    }, 2000) // Show loading for 2 seconds
+    }, 1500) // Branded intro duration
 
     return () => clearTimeout(timer)
   }, [])
 
+  // Subtle pointer/gyro parallax for the hero content.
+  const { x: pointerX, y: pointerY } = useParallax()
+  const heroX = useTransform(pointerX, (v) => v * 14)
+  const heroY = useTransform(pointerY, (v) => v * 14)
+
   if (!mounted) return null
   if (loading) return <Loading />
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    // You can add a console.log here if you want to verify it's working
-    console.log("Form submission prevented")
-  }
-
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen overflow-hidden bg-black text-white">
       <CustomCursor />
       <Navbar />
       <InteractiveShapes />
+      <BackToTop />
 
-      {/* Hero Section with Animated Boxes */}
-      <section id="home" className="relative h-screen flex items-center justify-center overflow-hidden">
-        <AnimatedBoxes />
-        <div className="container relative z-10 px-4 mx-auto">
+      {/* Hero Section */}
+      <section id="home" className="relative flex h-screen items-center justify-center overflow-hidden">
+        <HeroBackground />
+        <motion.div style={{ x: heroX, y: heroY }} className="container relative z-10 mx-auto px-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center"
           >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
-              Hey! It's G. Kirtika
+            {/* Availability pill */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-gray-300 backdrop-blur-sm"
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+              </span>
+              Available for work
+            </motion.div>
+
+            <h1 className="mb-4 font-display text-4xl font-bold md:text-6xl lg:text-7xl">
+              Hey! It's <span className="text-gradient">G. Kirtika</span>
             </h1>
-            <h2 className="text-xl md:text-2xl mb-8 text-gray-300">
-              🚀 AI Developer | Building Intelligent Agents | Tech Explorer
+
+            <h2 className="mb-8 flex flex-wrap items-center justify-center gap-x-2 text-xl text-gray-300 md:text-2xl">
+              <span aria-hidden="true">🚀</span>
+              <RoleRotator roles={["Senior Backend Developer", "AI Engineer", "Building Intelligent Agents", "Tech Explorer"]} />
             </h2>
+
             <div className="flex flex-wrap justify-center gap-4">
               <ScrollLink to="work" smooth={true} duration={500}>
-                <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                <MagneticButton
+                  shimmer
+                  className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-7 py-3 font-medium text-white shadow-lg shadow-purple-500/25"
+                >
                   View Projects
-                </Button>
+                  <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </MagneticButton>
               </ScrollLink>
               <ScrollLink to="contact" smooth={true} duration={500}>
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-2 border-purple-500 text-white hover:bg-purple-500 hover:text-white transition-all duration-300"
-                >
+                <MagneticButton className="rounded-full border border-purple-500/60 bg-white/5 px-7 py-3 font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-purple-400 hover:bg-purple-500/10">
                   Contact Me
-                </Button>
+                </MagneticButton>
               </ScrollLink>
             </div>
           </motion.div>
-        </div>
+        </motion.div>
+
+        {/* Scroll-down indicator */}
+        <ScrollLink
+          to="about"
+          smooth={true}
+          duration={500}
+          className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 cursor-pointer flex-col items-center gap-2 text-gray-500 transition-colors hover:text-white md:flex"
+        >
+          <span className="text-xs uppercase tracking-[0.25em]">Scroll</span>
+          <span className="flex h-9 w-5 items-start justify-center rounded-full border border-gray-600 p-1">
+            <span className="h-2 w-1 animate-scroll-dot rounded-full bg-gradient-to-b from-purple-400 to-pink-400" />
+          </span>
+        </ScrollLink>
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 bg-gradient-to-b from-black to-gray-900">
-        <div className="container px-4 mx-auto">
+      <section id="about" className="bg-gradient-to-b from-black to-gray-900 py-20">
+        <div className="container mx-auto px-4">
           <AboutMe />
         </div>
       </section>
@@ -92,22 +131,19 @@ export default function Home() {
       <ServicesSection />
 
       {/* Work Section */}
-      <section id="work" className="py-20 bg-gradient-to-b from-gray-900 to-black">
-        <div className="container px-4 mx-auto">
+      <section id="work" className="bg-gradient-to-b from-gray-900 to-black py-20">
+        <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            initial={sectionTitle.hidden}
+            whileInView={sectionTitle.visible}
+            transition={{ duration: 0.7 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-                What I've Built
-              </span>
-              <span className="ml-2 text-white">🏗️</span>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <SectionHeading title="What I've Built" emoji="🏗️" />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-6">
               <ProjectCard
+                featured
+                className="md:col-span-4"
                 title="YouTube Video Analyzer | AI Agent"
                 description="A powerful tool designed to help educators, content creators, and learners analyze and compare educational videos on YouTube. It provides in-depth insights into video performance, content quality, and audience engagement through various metrics and AI-powered analysis."
                 tags={["AI", "Python", "NLP", "Data Analysis"]}
@@ -115,12 +151,14 @@ export default function Home() {
                 period="January 2025 – February 2025"
               />
               <ProjectCard
+                className="md:col-span-2"
                 title="Video Mirror Detection Using Motion Cues"
                 description="Implemented mirror detection using advanced deep learning models, YOLO v8 and v11, to accurately identify and segment reflective surfaces in videos."
                 tags={["Computer Vision", "Deep Learning", "YOLO", "Object Detection"]}
                 period="Present"
               />
               <ProjectCard
+                className="md:col-span-2"
                 title="Road Connectivity Analysis in Rural Hilly Terrains"
                 description="Analyzed 433 slopes in Durg, Chhattisgarh, using DEM data and implemented machine learning models to identify priority areas for road development and upgrades."
                 tags={["Machine Learning", "Geospatial Analysis", "Data Science"]}
@@ -128,6 +166,7 @@ export default function Home() {
                 period="August 2024 – September 2024"
               />
               <ProjectCard
+                className="md:col-span-2"
                 title="Deep Learning and NLP Integrated Gold Price Forecasting"
                 description="Achieved 97.12% accuracy in predicting gold prices using NLP models combined with deep learning frameworks, facilitating investment strategy optimization based on financial dataset analysis. Leveraged time series forecasting techniques (LSTM, GRU) and feature engineering to analyze financial datasets from over 200 articles."
                 tags={["Deep Learning", "NLP", "Time Series", "LSTM", "GRU"]}
@@ -135,6 +174,7 @@ export default function Home() {
                 period="April 2024 – June 2024"
               />
               <ProjectCard
+                className="md:col-span-2"
                 title="Rice Diseases Identification & Classification"
                 description="Implemented CNN algorithms to classify rice diseases with 98% accuracy, contributing to a 20% productivity improvement for local farmers by advancing crop health monitoring techniques. Elevated crop health monitoring, driving a 20% productivity increase for farmers."
                 tags={["CNN", "Image Classification", "Agriculture Tech", "Deep Learning"]}
@@ -147,96 +187,41 @@ export default function Home() {
       </section>
 
       {/* Achievements/Certificates Section */}
-      <section id="achievements" className="py-20 bg-black">
-        <div className="container px-4 mx-auto">
+      <section id="achievements" className="bg-black py-20">
+        <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            initial={sectionTitle.hidden}
+            whileInView={sectionTitle.visible}
+            transition={{ duration: 0.7 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-                Achievements & Certifications
-              </span>
-              <span className="ml-2 text-white">🏆</span>
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <CertificateCard
-                title="Google Jams"
-                issuer="Google Cloud"
-                date="2023"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="IEEE WIE ILS, Raipur"
-                issuer="IEEE"
-                date="2023"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="Database Management Systems (DBMS)"
-                issuer="NPTEL"
-                date="2024"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="Management Information System (MIS)"
-                issuer="NPTEL"
-                date="2024"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="Algorithmic Game Theory (AGT)"
-                issuer="NPTEL"
-                date="2024"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="IEEE ICECCT"
-                issuer="IEEE"
-                date="2024"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="GECR Avesh '23 HACKATHON-4 Winner"
-                issuer="GECR"
-                date="2023"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="Winner, Technorollix Hackathon"
-                issuer="Technorollix"
-                date="2024"
-                image="/placeholder.svg?height=64&width=64"
-              />
-              <CertificateCard
-                title="Winner, Inter-Zone Chess Tournament"
-                issuer="Inter-Zone Chess"
-                date="2024"
-                image="/placeholder.svg?height=64&width=64"
-              />
+            <SectionHeading title="Achievements & Certifications" emoji="🏆" />
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <CertificateCard title="Google Jams" issuer="Google Cloud" date="2023" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="IEEE WIE ILS, Raipur" issuer="IEEE" date="2023" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="Database Management Systems (DBMS)" issuer="NPTEL" date="2024" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="Management Information System (MIS)" issuer="NPTEL" date="2024" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="Algorithmic Game Theory (AGT)" issuer="NPTEL" date="2024" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="IEEE ICECCT" issuer="IEEE" date="2024" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="GECR Avesh '23 HACKATHON-4 Winner" issuer="GECR" date="2023" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="Winner, Technorollix Hackathon" issuer="Technorollix" date="2024" image="/placeholder.svg?height=64&width=64" />
+              <CertificateCard title="Winner, Inter-Zone Chess Tournament" issuer="Inter-Zone Chess" date="2024" image="/placeholder.svg?height=64&width=64" />
             </div>
           </motion.div>
         </div>
       </section>
 
       {/* Research Publications Section */}
-      <section id="publications" className="py-20 bg-gradient-to-b from-black to-gray-900">
-        <div className="container px-4 mx-auto">
+      <section id="publications" className="bg-gradient-to-b from-black to-gray-900 py-20">
+        <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            initial={sectionTitle.hidden}
+            whileInView={sectionTitle.visible}
+            transition={{ duration: 0.7 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-                Research Publications
-              </span>
-              <span className="ml-2 text-white">📚</span>
-            </h2>
-            <div className="space-y-8">
+            <SectionHeading title="Research Publications" emoji="📚" />
+            <div className="mx-auto max-w-4xl space-y-8">
               <PublicationCard
                 title="Deep Learning and Natural Language Processing Integrated Gold Price Forecasting"
                 authors="G Kirtika, Rahul Pandya, Sridher Iyer"
@@ -251,66 +236,21 @@ export default function Home() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="py-20 bg-black">
-        <div className="container px-4 mx-auto">
+      <section id="contact" className="bg-black py-20">
+        <div className="container mx-auto px-4">
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
+            initial={sectionTitle.hidden}
+            whileInView={sectionTitle.visible}
+            transition={{ duration: 0.7 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">
-                Ping Me
-              </span>
-              <span className="ml-2 text-white">🚀</span>
-            </h2>
-            <div className="max-w-3xl mx-auto">
-              <div className="bg-gray-900 p-6 rounded-lg border border-gray-800">
-                <form
-                  action="https://formsubmit.co/gkirtika01@gmail.com"
-                  method="POST"
-                  className="space-y-4"
-                >
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-400">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      name="name"
-                      placeholder="Your Name"
-                      required
-                      className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white px-4 py-3"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-400">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      placeholder="Your Email"
-                      required
-                      className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white px-4 py-3"
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-400">
-                      Message
-                    </label>
-                    <textarea
-                      id="message"
-                      name="message"
-                      placeholder="Your Message"
-                      rows={4}
-                      required
-                      className="mt-1 block w-full rounded-md bg-gray-800 border-gray-700 text-white px-4 py-3"
-                    ></textarea>
-                  </div>
+            <SectionHeading title="Ping Me" emoji="🚀" />
+            <div className="mx-auto max-w-3xl">
+              <SpotlightCard className="p-6 md:p-8">
+                <form action="https://formsubmit.co/gkirtika01@gmail.com" method="POST" className="space-y-5">
+                  <FloatingField id="name" name="name" label="Your Name" type="text" />
+                  <FloatingField id="email" name="email" label="Your Email" type="email" />
+                  <FloatingField id="message" name="message" label="Your Message" textarea />
 
                   {/* Hidden fields for FormSubmit configuration */}
                   <input type="hidden" name="_captcha" value="true" />
@@ -319,41 +259,54 @@ export default function Home() {
                   <input type="hidden" name="_autoresponse" value="Thank you for your message! I'll get back to you soon." />
                   <input type="hidden" name="_subject" value="New Portfolio Contact Form Submission" />
 
-                  <Button
+                  <MagneticButton
                     type="submit"
-                    className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                    shimmer
+                    strength={0.12}
+                    className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3.5 font-medium text-white shadow-lg shadow-purple-500/20"
                   >
                     Send Message
-                  </Button>
+                    <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  </MagneticButton>
                 </form>
-                <div className="mt-6 text-center">
-                  <p className="text-gray-400 mb-2">Download my CV to learn more about my experience</p>
+
+                <div className="mt-8 border-t border-white/10 pt-6 text-center">
+                  <p className="mb-3 text-gray-400">Download my CV to learn more about my experience</p>
                   <div className="flex justify-center">
                     <a
-                      href="https://drive.google.com/file/d/1HDSo6OaQERaltgXz7Dscpw9806JYHH45/view?usp=sharing"
+                      href="https://drive.google.com/file/d/1B3Z6YGiznEulMhQaMVUdJQlE8tReYWFY/view?usp=sharing"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700"
+                      className="inline-flex items-center gap-2 rounded-full border border-pink-500/50 bg-pink-500/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-pink-500/20"
                     >
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="h-4 w-4" />
                       Download CV
                     </a>
                   </div>
                 </div>
-              </div>
+              </SpotlightCard>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Footer with Social Links */}
-      <footer className="py-12 bg-gradient-to-t from-gray-900 to-black">
-        <div className="container px-4 mx-auto">
-          <div className="flex flex-wrap justify-center gap-6 mb-8">
+      {/* Footer */}
+      <footer className="relative overflow-hidden border-t border-white/5 bg-gradient-to-t from-gray-900 to-black py-16">
+        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-40 w-[40rem] max-w-full -translate-y-1/2 rounded-full bg-purple-600/10 blur-[100px]" />
+        <div className="container relative z-10 mx-auto px-4 text-center">
+          <p className="mb-2 inline-flex items-center gap-2 text-sm uppercase tracking-[0.3em] text-purple-400">
+            <Sparkles className="h-4 w-4" /> Let's connect
+          </p>
+          <h3 className="mx-auto mb-8 max-w-2xl font-display text-3xl font-bold md:text-4xl">
+            Let's <span className="text-gradient">build something</span> intelligent together
+          </h3>
+
+          <div className="mb-8 flex flex-wrap justify-center gap-4">
             <SocialIcon icon={<Github />} href="https://github.com/kirtika01" label="GitHub" />
             <SocialIcon icon={<Linkedin />} href="https://www.linkedin.com/in/g-kirtika-426687254/" label="LinkedIn" />
           </div>
-          <div className="text-center text-gray-500 text-sm">
+
+          <div className="text-sm text-gray-500">
             <p>© {new Date().getFullYear()} G. Kirtika. All rights reserved.</p>
             <ContactEmail />
           </div>
@@ -363,41 +316,90 @@ export default function Home() {
   )
 }
 
+function SectionHeading({ title, emoji }: { title: string; emoji: string }) {
+  return (
+    <h2 className="mb-12 text-center font-display text-3xl font-bold md:text-4xl">
+      <span className="text-gradient">{title}</span>
+      <span className="ml-2">{emoji}</span>
+    </h2>
+  )
+}
+
 interface ProjectCardProps {
   title: string
   description: string
   tags: string[]
   link?: string
   period?: string
-  image?: string
+  featured?: boolean
+  className?: string
 }
 
-function ProjectCard({ title, description, tags, link, period }: ProjectCardProps) {
+function ProjectCard({ title, description, tags, link, period, featured, className }: ProjectCardProps) {
   return (
-    <div className="p-6 rounded-lg bg-gray-900 border border-gray-800 hover:border-purple-500 transition-all duration-300">
-      <h3 className="text-xl font-bold mb-2 text-white text-center md:text-left">{title}</h3>
-      {period && <p className="text-purple-400 mb-3 text-sm text-center md:text-left">{period}</p>}
-      <p className="text-gray-400 mb-4 text-center md:text-left">{description}</p>
-      <div className="flex flex-wrap justify-center md:justify-start gap-2 mb-3">
-        {tags.map((tag: string, index: number) => (
-          <span key={index} className="text-xs px-2 py-1 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 text-purple-300">
-            {tag}
+    <Reveal className={className}>
+      <SpotlightCard tilt cursorLabel="View" className="h-full">
+        <div className="flex h-full flex-col p-6">
+        {period && (
+          <span className="mb-3 inline-flex w-fit items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-300">
+            {period}
           </span>
-        ))}
-      </div>
-      {link && (
-        <div className="text-center md:text-left">
-          <a
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center text-sm text-purple-400 hover:text-purple-300 transition-colors"
-          >
-            <span>View Project</span>
-            <ExternalLink className="ml-1 w-4 h-4" />
-          </a>
+        )}
+        <h3 className={`mb-2 font-display font-bold text-white ${featured ? "text-2xl" : "text-xl"}`}>{title}</h3>
+        <p className={`mb-4 text-gray-400 ${featured ? "text-base" : "text-sm"}`}>{description}</p>
+        <div className="mt-auto">
+          <div className="mb-3 flex flex-wrap gap-2">
+            {tags.map((tag, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-gradient-to-r from-purple-500/15 to-pink-500/15 px-2.5 py-1 text-xs text-purple-200 ring-1 ring-white/5"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+          {link && (
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-sm text-purple-400 transition-colors hover:text-pink-300"
+            >
+              <span>View Project</span>
+              <ExternalLink className="h-4 w-4" />
+            </a>
+          )}
         </div>
+        </div>
+      </SpotlightCard>
+    </Reveal>
+  )
+}
+
+interface FloatingFieldProps {
+  id: string
+  name: string
+  label: string
+  type?: string
+  textarea?: boolean
+}
+
+function FloatingField({ id, name, label, type = "text", textarea }: FloatingFieldProps) {
+  const shared =
+    "peer w-full rounded-xl border border-white/10 bg-white/5 px-4 pb-2.5 pt-6 text-white placeholder-transparent outline-none transition-colors focus:border-purple-500/70 focus:ring-2 focus:ring-purple-500/20"
+  const labelCls =
+    "pointer-events-none absolute left-4 top-2 text-xs text-purple-300 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-xs peer-focus:text-purple-300"
+
+  return (
+    <div className="relative">
+      {textarea ? (
+        <textarea id={id} name={name} rows={4} required placeholder={label} className={shared} />
+      ) : (
+        <input id={id} name={name} type={type} required placeholder={label} className={shared} />
       )}
+      <label htmlFor={id} className={labelCls}>
+        {label}
+      </label>
     </div>
   )
 }
@@ -405,7 +407,7 @@ function ProjectCard({ title, description, tags, link, period }: ProjectCardProp
 function ContactEmail() {
   return (
     <div className="mt-2">
-      <a href="mailto:gkirtika01@gmail.com" className="text-purple-400 hover:text-purple-300">
+      <a href="mailto:gkirtika01@gmail.com" className="text-purple-400 transition-colors hover:text-pink-300">
         gkirtika01@gmail.com
       </a>
     </div>

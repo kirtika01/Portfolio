@@ -1,8 +1,8 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { Award, ExternalLink } from "lucide-react"
-import Image from "next/image"
+import SpotlightCard from "@/components/spotlight-card"
+import Reveal from "@/components/reveal"
 
 interface CertificateCardProps {
   title: string
@@ -12,45 +12,43 @@ interface CertificateCardProps {
   link?: string
 }
 
-export default function CertificateCard({ title, issuer, date, image, link }: CertificateCardProps) {
+const issuerStyles: Record<string, { ring: string; icon: string }> = {
+  "Google Cloud": { ring: "from-blue-500/30 to-green-500/30", icon: "text-blue-400" },
+  IEEE: { ring: "from-blue-500/30 to-blue-700/30", icon: "text-blue-400" },
+  NPTEL: { ring: "from-orange-500/30 to-red-500/30", icon: "text-orange-400" },
+}
+
+export default function CertificateCard({ title, issuer, date, link }: CertificateCardProps) {
+  const style = issuerStyles[issuer] ?? { ring: "from-purple-500/30 to-pink-500/30", icon: "text-purple-400" }
+
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      className="p-6 rounded-lg bg-gray-900 border border-gray-800 hover:border-purple-500 transition-all duration-300"
-    >
-      <div className="flex flex-col md:flex-row gap-4 items-center md:items-start">
-        <div className="w-16 h-16 relative flex-shrink-0">
-          <div className={`w-16 h-16 rounded-full bg-gradient-to-r ${
-            issuer === "Google Cloud" ? "from-blue-500/20 to-green-500/20" :
-            issuer === "IEEE" ? "from-blue-500/20 to-blue-700/20" :
-            issuer === "NPTEL" ? "from-orange-500/20 to-red-500/20" :
-            "from-purple-500/20 to-pink-500/20"
-          } flex items-center justify-center`}>
-            <Award className={`w-8 h-8 ${
-              issuer === "Google Cloud" ? "text-blue-400" :
-              issuer === "IEEE" ? "text-blue-500" :
-              issuer === "NPTEL" ? "text-orange-400" :
-              "text-purple-400"
-            }`} />
+    <Reveal className="h-full">
+      <SpotlightCard className="h-full" cursorLabel={link ? "View" : undefined}>
+      <div className="flex h-full flex-col items-center gap-4 p-6 text-center md:flex-row md:items-start md:text-left">
+        {/* Badge */}
+        <div className="relative flex-shrink-0">
+          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${style.ring} ring-1 ring-white/10`}>
+            <Award className={`h-8 w-8 ${style.icon}`} />
           </div>
         </div>
-        <div className="flex-1 text-center md:text-left">
-          <h3 className="text-xl font-bold text-white mb-1">{title}</h3>
-          <p className="text-purple-400 mb-2">{issuer}</p>
-          <p className="text-gray-400 text-sm mb-3">{date}</p>
+        <div className="flex-1">
+          <h3 className="mb-1 font-display text-lg font-bold text-white">{title}</h3>
+          <p className="text-sm text-purple-400">{issuer}</p>
+          <p className="mb-2 text-xs text-gray-500">{date}</p>
           {link && (
             <a
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-sm text-gray-300 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1 text-sm text-gray-300 transition-colors hover:text-white"
             >
               <span>View Certificate</span>
-              <ExternalLink className="ml-1 w-4 h-4" />
+              <ExternalLink className="h-4 w-4" />
             </a>
           )}
         </div>
       </div>
-    </motion.div>
+      </SpotlightCard>
+    </Reveal>
   )
 }

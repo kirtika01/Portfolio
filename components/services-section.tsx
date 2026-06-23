@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { ExternalLink } from "lucide-react"
 import React from "react"
+import SpotlightCard from "@/components/spotlight-card"
 
 const fadeIn = {
     hidden: { opacity: 0, y: 24 },
@@ -20,7 +21,7 @@ function ResourceLink({ href, children }: ResourceLinkProps) {
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center text-sm text-purple-300 hover:text-pink-300 transition-colors"
+            className="inline-flex items-center text-sm text-purple-300 transition-colors hover:text-pink-300"
         >
             {children}
             <ExternalLink className="ml-1 h-3.5 w-3.5" />
@@ -30,20 +31,20 @@ function ResourceLink({ href, children }: ResourceLinkProps) {
 
 export default function ServicesSection() {
     return (
-        <section id="services" className="py-20 bg-black relative overflow-hidden">
+        <section id="services" className="relative overflow-hidden bg-black py-20">
             <div className="absolute inset-0 pointer-events-none select-none opacity-30 [background:radial-gradient(circle_at_30%_50%,rgba(168,85,247,0.15),transparent_60%),radial-gradient(circle_at_70%_50%,rgba(236,72,153,0.12),transparent_60%)]" />
-            <div className="container mx-auto px-4 relative z-10">
+            <div className="container relative z-10 mx-auto px-4">
                 <motion.div
                     initial={fadeIn.hidden}
                     whileInView={fadeIn.visible}
                     viewport={{ once: true, amount: 0.2 }}
                     transition={{ duration: 0.7 }}
                 >
-                    <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">Services</span>
+                    <h2 className="mb-6 text-center font-display text-3xl font-bold md:text-4xl">
+                        <span className="text-gradient">Services</span>
                         <span className="ml-2">🧠</span>
                     </h2>
-                    <p className="text-gray-300 max-w-3xl mx-auto text-center leading-relaxed mb-14">
+                    <p className="mx-auto mb-14 max-w-3xl text-center leading-relaxed text-gray-300">
                         I provide AI Education, Training, and Custom Automation Solutions tailored for students, teachers, professionals, and organizations. My services are designed to bridge the gap between theory and practical implementation of AI.
                     </p>
 
@@ -55,25 +56,31 @@ export default function ServicesSection() {
                         viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.6, delay: 0.1 }}
                     >
-                        <h3 className="text-2xl font-semibold mb-4 flex items-center gap-2">
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">Pre-Demo Training Sessions</span>
+                        <h3 className="mb-4 flex items-center gap-2 font-display text-2xl font-semibold">
+                            <span className="text-gradient">Pre-Demo Training Sessions</span>
                             <span className="text-xl">🎤</span>
                         </h3>
-                        <p className="text-gray-400 mb-4">
-                            I have successfully trained <span className="text-purple-300 font-medium">300+ teachers</span> through structured sessions, covering:
+                        <p className="mb-4 text-gray-400">
+                            I have successfully trained <span className="font-medium text-purple-300">300+ teachers</span> through structured sessions, covering:
                         </p>
                         <ul className="space-y-4">
-                            <li className="p-4 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-purple-500 transition-colors">
-                                <p className="text-gray-200 font-medium mb-1">Building AI Agents with No-Code Tools – live, interactive training with Q&amp;A.</p>
-                                <ResourceLink href="https://drive.google.com/file/d/1A8re9M89Oi5NTKe1OuEi-94XFpeXYNIJ/view?usp=sharing">Session Recording</ResourceLink>
+                            <li>
+                                <SpotlightCard className="p-4">
+                                    <p className="mb-1 font-medium text-gray-200">Building AI Agents with No-Code Tools – live, interactive training with Q&amp;A.</p>
+                                    <ResourceLink href="https://drive.google.com/file/d/1A8re9M89Oi5NTKe1OuEi-94XFpeXYNIJ/view?usp=sharing">Session Recording</ResourceLink>
+                                </SpotlightCard>
                             </li>
-                            <li className="p-4 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-purple-500 transition-colors">
-                                <p className="text-gray-200 font-medium mb-1">AI Tools for Automating Teachers’ Daily Workflows – grading, scheduling, content preparation, and more.</p>
-                                <ResourceLink href="https://drive.google.com/file/d/1ADs7119Nggv11O5zJhdb0pLqM8OHB1Vs/view?usp=sharing">Session Recording</ResourceLink>
+                            <li>
+                                <SpotlightCard className="p-4">
+                                    <p className="mb-1 font-medium text-gray-200">AI Tools for Automating Teachers’ Daily Workflows – grading, scheduling, content preparation, and more.</p>
+                                    <ResourceLink href="https://drive.google.com/file/d/1ADs7119Nggv11O5zJhdb0pLqM8OHB1Vs/view?usp=sharing">Session Recording</ResourceLink>
+                                </SpotlightCard>
                             </li>
-                            <li className="p-4 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-purple-500 transition-colors">
-                                <p className="text-gray-200 font-medium mb-1">Agentic AI vs. Normal AI – understanding the difference between traditional AI and the future of agentic AI.</p>
-                                <ResourceLink href="https://drive.google.com/file/d/1VKwigYXF96WIW7O1N_JxgPrMyeyBDCZD/view?usp=sharing">Session Recording</ResourceLink>
+                            <li>
+                                <SpotlightCard className="p-4">
+                                    <p className="mb-1 font-medium text-gray-200">Agentic AI vs. Normal AI – understanding the difference between traditional AI and the future of agentic AI.</p>
+                                    <ResourceLink href="https://drive.google.com/file/d/1VKwigYXF96WIW7O1N_JxgPrMyeyBDCZD/view?usp=sharing">Session Recording</ResourceLink>
+                                </SpotlightCard>
                             </li>
                         </ul>
                     </motion.div>
@@ -86,21 +93,17 @@ export default function ServicesSection() {
                         viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.6, delay: 0.15 }}
                     >
-                        <h3 className="text-2xl font-semibold mb-4">
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">Live AI Projects</span>
+                        <h3 className="mb-4 font-display text-2xl font-semibold">
+                            <span className="text-gradient">Live AI Projects</span>
                         </h3>
-                        <p className="text-gray-400 mb-6">I have designed and deployed AI-powered automation agents for different organizations, including:</p>
+                        <p className="mb-6 text-gray-400">I have designed and deployed AI-powered automation agents for different organizations, including:</p>
                         <div className="grid gap-6 md:grid-cols-2">
-                            <div className="p-5 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-pink-500 transition-colors">
-                                <h4 className="text-lg font-semibold mb-1 text-white">AI-Powered Learning Agent – <ResourceLink href="https://preview--adaptive-ai-path.lovable.app">preview--adaptive-ai-path.lovable.app</ResourceLink></h4>
-                                <p className="text-sm text-gray-400 mt-2 leading-relaxed">A four-week structured program that guides students, parents, and professionals in learning AI with interactive lessons, daily schedules, and real-time query handling.</p>
-                            </div>
-                            <div className="p-5 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-pink-500 transition-colors">
-                                <h4 className="text-lg font-semibold mb-1 text-white">Check-In/Check-Out Agent – <ResourceLink href="https://checkin.oll.co">checkin.oll.co</ResourceLink></h4>
-                                <p className="text-sm text-gray-400 mt-2 leading-relaxed">An automated attendance system that records entries and exits, reduces manual effort, and ensures accurate, efficient activity tracking.</p>
-                            </div>
+                            <SpotlightCard className="p-5">
+                                <h4 className="mb-1 font-display text-lg font-semibold text-white">Check-In/Check-Out Agent – <ResourceLink href="https://checkin.oll.co">checkin.oll.co</ResourceLink></h4>
+                                <p className="mt-2 text-sm leading-relaxed text-gray-400">An automated attendance system that records entries and exits, reduces manual effort, and ensures accurate, efficient activity tracking.</p>
+                            </SpotlightCard>
                         </div>
-                        <p className="text-gray-400 mt-6">These solutions demonstrate how AI can simplify workflows, save time, and create smarter systems for businesses, educators, and learners.</p>
+                        <p className="mt-6 text-gray-400">These solutions demonstrate how AI can simplify workflows, save time, and create smarter systems for businesses, educators, and learners.</p>
                     </motion.div>
 
                     {/* What I Offer */}
@@ -110,8 +113,8 @@ export default function ServicesSection() {
                         viewport={{ once: true, amount: 0.2 }}
                         transition={{ duration: 0.6, delay: 0.2 }}
                     >
-                        <h3 className="text-2xl font-semibold mb-6">
-                            <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-500">What I Offer</span>
+                        <h3 className="mb-6 font-display text-2xl font-semibold">
+                            <span className="text-gradient">What I Offer</span>
                         </h3>
                         <div className="grid gap-6 md:grid-cols-2">
                             <OfferCard
@@ -145,10 +148,9 @@ interface OfferCardProps {
 
 function OfferCard({ title, body }: OfferCardProps) {
     return (
-        <div className="group p-5 rounded-lg bg-gray-900/60 border border-gray-800 hover:border-purple-500 transition-colors relative overflow-hidden">
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-transparent" />
-            <h4 className="text-lg font-semibold mb-2 text-white relative z-10">{title}</h4>
-            <p className="text-sm text-gray-400 leading-relaxed relative z-10">{body}</p>
-        </div>
+        <SpotlightCard tilt className="h-full p-5">
+            <h4 className="mb-2 font-display text-lg font-semibold text-white">{title}</h4>
+            <p className="text-sm leading-relaxed text-gray-400">{body}</p>
+        </SpotlightCard>
     )
 }

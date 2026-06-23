@@ -1,97 +1,58 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { motion, useAnimation } from "framer-motion"
+import { motion } from "framer-motion"
 
 export default function Loading() {
   const [progress, setProgress] = useState(0)
-  const controls = useAnimation()
 
   useEffect(() => {
-    const duration = 12 // Total duration in seconds (increased from 6 to 18 for 3x slower)
-    const interval = 50 // Update interval in milliseconds
+    const start = performance.now()
+    const duration = 1500 // ms — matches the unmount timer in page.tsx
+    let raf = 0
 
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + 100 / ((duration * 500) / interval)
-        if (next >= 100) {
-          clearInterval(timer)
-          return 100
-        }
-        return next
-      })
-    }, interval)
-
-    return () => clearInterval(timer)
+    const tick = (now: number) => {
+      const elapsed = now - start
+      const pct = Math.min(100, Math.round((elapsed / duration) * 100))
+      setProgress(pct)
+      if (pct < 100) raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
   }, [])
 
-  useEffect(() => {
-    controls.start({ width: `${progress}%` })
-  }, [progress, controls])
-
   return (
-    <div className="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
-      <div className="w-64 relative">
-        {/* Main loading bar container */}
-        <div className="h-2 w-full bg-gray-800 rounded-full overflow-hidden relative">
-          {/* Gradient background */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-purple-600"
-            initial={{ x: "-100%" }}
-            animate={{ x: "0%" }}
-            transition={{
-              repeat: Number.POSITIVE_INFINITY,
-              duration: 6, // Increased from 2 to 6 for slower background animation
-              ease: "linear",
-            }}
-          />
+    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#07070b]">
+      {/* Ambient glow */}
+      <div className="pointer-events-none absolute h-72 w-72 rounded-full bg-purple-600/20 blur-[120px]" />
 
-          {/* Progress bar */}
+      <div className="relative flex flex-col items-center">
+        {/* Spinning gradient ring + monogram */}
+        <div className="relative h-28 w-28">
+          <div className="absolute inset-0 animate-spin-slow rounded-full bg-[conic-gradient(from_0deg,#a855f7,#ec4899,#22d3ee,#a855f7)] [mask:radial-gradient(farthest-side,transparent_calc(100%-3px),#000_calc(100%-3px))]" />
           <motion.div
-            className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-            initial={{ width: 0 }}
-            animate={controls}
-            transition={{ duration: 0.1 }} // Added a small duration for smoother animation
-          />
-
-          {/* Glow effect */}
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-sm"
-            initial={{ width: 0 }}
-            animate={controls}
-            transition={{ duration: 0.1 }} // Added a small duration for smoother animation
-          />
-        </div>
-
-        {/* Percentage text */}
-        <div className="mt-4 text-center">
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent"
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="absolute inset-[10px] flex items-center justify-center rounded-full bg-[#0b0b12]"
           >
-            {Math.round(progress)}%
+            <span className="font-display text-4xl font-bold text-gradient">K</span>
           </motion.div>
         </div>
 
-        {/* Loading text with glitch effect */}
-        <motion.div
-          className="mt-2 text-center text-gray-400 text-sm relative"
-          animate={{
-            textShadow: [
-              "0 0 0px rgba(139, 92, 246, 0)",
-              "0 0 2px rgba(139, 92, 246, 0.5)",
-              "0 0 0px rgba(139, 92, 246, 0)",
-            ],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "linear",
-          }}
-        >
-          Loading...
-        </motion.div>
+        {/* Thin progress track */}
+        <div className="mt-8 h-1 w-48 overflow-hidden rounded-full bg-white/10">
+          <motion.div
+            className="h-full rounded-full bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500"
+            animate={{ width: `${progress}%` }}
+            transition={{ ease: "easeOut", duration: 0.15 }}
+          />
+        </div>
+
+        <div className="mt-4 flex items-center gap-2 text-sm tracking-[0.3em] text-gray-500">
+          <span className="font-display">LOADING</span>
+          <span className="tabular-nums text-gray-400">{progress}%</span>
+        </div>
       </div>
     </div>
   )

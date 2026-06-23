@@ -1,7 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
 import { BookOpen, ExternalLink } from "lucide-react"
+import SpotlightCard from "@/components/spotlight-card"
 
 interface PublicationCardProps {
   title: string
@@ -14,33 +14,32 @@ interface PublicationCardProps {
 
 export default function PublicationCard({ title, authors, journal, date, link, abstract }: PublicationCardProps) {
   return (
-    <motion.div
-      whileHover={{ y: -5 }}
-      className="p-6 rounded-lg bg-gray-900 border border-gray-800 hover:border-purple-500 transition-all duration-300"
-    >
-      <div className="flex gap-4">
-        <div className="hidden md:flex w-10 h-10 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 items-center justify-center flex-shrink-0">
-          <BookOpen className="w-5 h-5 text-purple-400" />
+    <SpotlightCard className="p-6 md:p-8" cursorLabel={link ? "Read" : undefined}>
+      <div className="flex flex-col gap-5 md:flex-row">
+        <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-500/25 to-pink-500/25 ring-1 ring-white/10">
+          <BookOpen className="h-6 w-6 text-purple-300" />
         </div>
         <div className="flex-1">
-          <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
-          <p className="text-gray-300 mb-1">{authors}</p>
-          <p className="text-purple-400 mb-1">{journal}</p>
-          <p className="text-gray-400 text-sm mb-3">{date}</p>
-          {abstract && <p className="text-gray-400 text-sm mb-3 line-clamp-3">{abstract}</p>}
+          <span className="mb-3 inline-flex items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs uppercase tracking-wide text-purple-300">
+            Published · {date}
+          </span>
+          <h3 className="mb-2 font-display text-xl font-bold text-white md:text-2xl">{title}</h3>
+          <p className="mb-1 text-gray-300">{authors}</p>
+          <p className="mb-3 text-purple-400">{journal}</p>
+          {abstract && <p className="mb-4 text-sm leading-relaxed text-gray-400">{abstract}</p>}
           {link && (
             <a
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-sm text-gray-300 hover:text-white transition-colors"
+              className="inline-flex items-center gap-1 text-sm font-medium text-purple-400 transition-colors hover:text-pink-300"
             >
               <span>Read Publication</span>
-              <ExternalLink className="ml-1 w-4 h-4" />
+              <ExternalLink className="h-4 w-4" />
             </a>
           )}
         </div>
       </div>
-    </motion.div>
+    </SpotlightCard>
   )
 }

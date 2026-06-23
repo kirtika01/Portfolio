@@ -31,6 +31,12 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    --radius: 0.85rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
 }
 
@@ -39,7 +45,86 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: rgba(168, 85, 247, 0.35);
+    color: #fff;
+  }
+}
+
+@layer utilities {
+  /* Animated gradient text — replaces the static purple→pink everywhere */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(90deg, #a855f7, #ec4899, #d946ef, #8b5cf6, #a855f7);
+    background-size: 250% auto;
+    animation: gradient-shift 6s ease infinite;
+  }
+  .text-gradient-static {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-fuchsia-400 to-pink-500;
+  }
+
+  /* Frosted glass surfaces */
+  .glass {
+    background: rgba(18, 18, 26, 0.55);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-strong {
+    background: rgba(12, 12, 18, 0.78);
+    backdrop-filter: blur(20px) saturate(150%);
+    -webkit-backdrop-filter: blur(20px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Soft glow used behind avatars / featured elements */
+  .glow-purple {
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.25), 0 18px 60px -20px rgba(168, 85, 247, 0.55);
+  }
+
+  /* Gradient hairline border helper */
+  .border-gradient {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#0b0b12, #0b0b12) padding-box,
+      linear-gradient(120deg, rgba(168, 85, 247, 0.6), rgba(236, 72, 153, 0.6)) border-box;
+  }
+}
+
+/* Subtle film-grain overlay for depth (added in layout) */
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.035;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
 
