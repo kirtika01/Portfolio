@@ -1,9 +1,11 @@
 "use client"
 
 import Image from "next/image"
+import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { Calendar, MapPin, Building2, Server, Bot, FlaskConical, Code2, Palette } from "lucide-react"
 import SpotlightCard from "@/components/spotlight-card"
+import { DURATION, EASE, STAGGER, gsap, prefersReducedMotion, registerGsap } from "@/lib/motion"
 
 const timelineData = [
   {
@@ -102,6 +104,60 @@ const skillsData = {
 }
 
 export default function AboutMe() {
+  const timelineRef = useRef<HTMLDivElement>(null)
+  const lineRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const container = timelineRef.current
+    if (!container) return
+    registerGsap()
+
+    const items = container.querySelectorAll("[data-timeline-item]")
+
+    if (prefersReducedMotion()) {
+      gsap.set(items, { opacity: 1, y: 0 })
+      if (lineRef.current) gsap.set(lineRef.current, { scaleY: 1 })
+      return
+    }
+
+    const ctx = gsap.context(() => {
+      // The line grows in step with how far through the timeline you are.
+      if (lineRef.current) {
+        gsap.fromTo(
+          lineRef.current,
+          { scaleY: 0 },
+          {
+            scaleY: 1,
+            ease: "none",
+            scrollTrigger: {
+              trigger: container,
+              start: "top 70%",
+              end: "bottom 80%",
+              scrub: 0.6,
+            },
+          },
+        )
+      }
+
+      items.forEach((item, index) => {
+        gsap.fromTo(
+          item,
+          { opacity: 0, y: 28 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: DURATION,
+            ease: EASE,
+            delay: (index % 2) * STAGGER,
+            scrollTrigger: { trigger: item, start: "top 88%", once: true },
+          },
+        )
+      })
+    }, container)
+
+    return () => ctx.revert()
+  }, [])
+
   return (
     <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
       <h2 className="mb-10 text-center font-display text-3xl font-bold md:text-4xl">
@@ -171,25 +227,19 @@ export default function AboutMe() {
           <span className="text-gradient">The Road So Far</span>
           <span className="ml-2 text-white">🛤️</span>
         </h3>
-        <div className="relative">
-          {/* Drawn vertical line (desktop) */}
-          <motion.div
-            initial={{ scaleY: 0 }}
-            whileInView={{ scaleY: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 1.2, ease: "easeOut" }}
+        <div ref={timelineRef} className="relative">
+          {/* Drawn vertical line (desktop) — fills in step with scroll position */}
+          <div
+            ref={lineRef}
             style={{ transformOrigin: "top" }}
             className="absolute left-1/2 top-0 hidden h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-purple-500 via-fuchsia-500 to-pink-500 md:block"
           />
 
           <div className="space-y-10">
             {timelineData.map((item, index) => (
-              <motion.div
+              <div
                 key={item.id}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                data-timeline-item
                 className={`relative flex flex-col gap-8 md:flex-row ${index % 2 !== 0 ? "md:flex-row-reverse" : ""}`}
               >
                 {/* Content */}
@@ -229,7 +279,7 @@ export default function AboutMe() {
                 <div className="absolute left-1/2 top-7 hidden h-4 w-4 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 ring-4 ring-black md:block">
                   <span className="absolute inset-0 animate-pulse-ring rounded-full bg-purple-500/60" />
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -259,6 +309,35 @@ export default function AboutMe() {
 }
 
 function SkillBar({ name, proficiency }: { name: string; proficiency: number }) {
+  const barRef = useRef<HTMLDivElement>(null)
+
+  // Fill from 0 to the real value the first time the bar scrolls into view.
+  useEffect(() => {
+    const el = barRef.current
+    if (!el) return
+    registerGsap()
+
+    if (prefersReducedMotion()) {
+      gsap.set(el, { width: `${proficiency}%` })
+      return
+    }
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        el,
+        { width: "0%" },
+        {
+          width: `${proficiency}%`,
+          duration: 1,
+          ease: EASE,
+          scrollTrigger: { trigger: el, start: "top 92%", once: true },
+        },
+      )
+    }, el)
+
+    return () => ctx.revert()
+  }, [proficiency])
+
   return (
     <div className="mb-3">
       <div className="mb-1.5 flex justify-between">
@@ -266,11 +345,9 @@ function SkillBar({ name, proficiency }: { name: string; proficiency: number }) 
         <span className="text-sm text-gray-400">{proficiency}%</span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-white/10">
-        <motion.div
-          initial={{ width: 0 }}
-          whileInView={{ width: `${proficiency}%` }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease: "easeOut" }}
+        <div
+          ref={barRef}
+          style={{ width: 0 }}
           className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_12px_rgba(168,85,247,0.6)]"
         />
       </div>

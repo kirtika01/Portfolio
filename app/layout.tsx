@@ -4,6 +4,7 @@ import { Inter, Space_Grotesk } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import InteractiveBackground from "@/components/interactive-background"
+import SmoothScroll from "@/components/smooth-scroll"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -32,7 +33,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="font-sans">
+        {/* Without JS the reveal animations never run, so show their content. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1 !important}`}</style>
+        </noscript>
         <ThemeProvider attribute="class" defaultTheme="dark">
+          <SmoothScroll />
           <InteractiveBackground />
           {children}
           <div className="noise-overlay" aria-hidden="true" />

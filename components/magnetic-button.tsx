@@ -62,9 +62,14 @@ export default function MagneticButton({
       onMouseMove={handleMove}
       onMouseLeave={reset}
       onPointerDown={handleDown}
-      whileTap={{ scale: 0.94 }}
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       style={{ x: sx, y: sy }}
-      className={cn("group relative overflow-hidden", className)}
+      className={cn(
+        "group relative overflow-hidden transition-shadow duration-300 hover:shadow-[0_10px_30px_-10px_rgba(168,85,247,0.6)]",
+        className,
+      )}
       {...rest}
     >
       {ripples.map((r) => (

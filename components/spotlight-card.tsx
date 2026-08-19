@@ -50,11 +50,11 @@ export default function SpotlightCard({ children, className, tilt = false, radiu
       data-cursor={cursorLabel}
       onMouseMove={handleMove}
       onMouseLeave={handleLeave}
-      whileHover={{ y: -5 }}
-      transition={{ type: "spring", stiffness: 250, damping: 20 }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       style={tilt ? { rotateX, rotateY, transformPerspective: 1000 } : undefined}
       className={cn(
-        "group/spot relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] backdrop-blur-sm transition-shadow duration-300 hover:border-purple-500/50 hover:shadow-2xl hover:shadow-purple-500/10",
+        "group/spot relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm transition-[box-shadow,border-color] duration-300 hover:border-purple-500/40 hover:shadow-[0_18px_40px_-18px_rgba(168,85,247,0.45)]",
         className,
       )}
     >
