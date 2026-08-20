@@ -32,21 +32,21 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
                 </span>
               )}
               {period && (
-                <span className="inline-flex w-fit items-center rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-300">
+                <span className="inline-flex w-fit items-center rounded-full border border-[#b98a5e]/20 bg-[#b98a5e]/10 px-3 py-1 text-xs text-[#e0c9ad]">
                   {period}
                 </span>
               )}
             </div>
 
             <h3
-              className={`mb-2 font-display font-bold text-white transition-colors duration-300 group-hover/card:text-purple-200 ${
+              className={`mb-2 font-display font-bold text-white transition-colors duration-300 group-hover/card:text-[#f0e2d0] ${
                 featured ? "text-2xl md:text-3xl" : "text-xl"
               }`}
             >
               {title}
             </h3>
 
-            <p className={`mb-5 leading-relaxed text-gray-400 ${featured ? "max-w-2xl text-base" : "text-sm"}`}>
+            <p className={`mb-5 leading-relaxed text-stone-400 ${featured ? "max-w-2xl text-base" : "text-sm"}`}>
               {summary}
             </p>
 
@@ -55,7 +55,7 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
                 {stats.map((s) => (
                   <div key={s.label} className="rounded-xl border border-white/[0.06] bg-white/[0.03] px-4 py-2.5">
                     <p className="font-display text-lg font-bold text-gradient">{s.value}</p>
-                    <p className="text-xs text-gray-500">{s.label}</p>
+                    <p className="text-xs text-stone-500">{s.label}</p>
                   </div>
                 ))}
               </div>
@@ -66,7 +66,7 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
                 {tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full bg-gradient-to-r from-purple-500/15 to-pink-500/15 px-2.5 py-1 text-xs text-purple-200 ring-1 ring-white/5"
+                    className="rounded-full bg-gradient-to-r from-[#b98a5e]/15 to-[#8a5a34]/15 px-2.5 py-1 text-xs text-[#f0e2d0] ring-1 ring-white/5"
                   >
                     {tag}
                   </span>
@@ -74,11 +74,11 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
               </div>
 
               <div className="flex items-center justify-between gap-3 border-t border-white/[0.06] pt-4">
-                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-purple-300 transition-colors group-hover/card:text-pink-300">
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#e0c9ad] transition-colors group-hover/card:text-[#dcc0a0]">
                   View Details
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover/card:translate-x-1" />
                 </span>
-                <span className="flex items-center gap-3 text-gray-600">
+                <span className="flex items-center gap-3 text-stone-600">
                   {githubUrl && <Github className="h-4 w-4" />}
                   {liveUrl && <Radio className="h-4 w-4" />}
                 </span>

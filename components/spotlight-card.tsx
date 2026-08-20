@@ -41,7 +41,7 @@ export default function SpotlightCard({ children, className, tilt = false, radiu
   }
 
   // Purple spotlight + a brighter "glare" reflection that reads as depth under tilt.
-  const spotlight = useMotionTemplate`radial-gradient(${radius}px circle at ${mx}px ${my}px, rgba(168,85,247,0.18), transparent 72%)`
+  const spotlight = useMotionTemplate`radial-gradient(${radius}px circle at ${mx}px ${my}px, rgba(185,138,94,0.18), transparent 72%)`
   const glare = useMotionTemplate`radial-gradient(220px circle at ${mx}px ${my}px, rgba(255,255,255,0.10), transparent 60%)`
 
   return (
@@ -54,7 +54,7 @@ export default function SpotlightCard({ children, className, tilt = false, radiu
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
       style={tilt ? { rotateX, rotateY, transformPerspective: 1000 } : undefined}
       className={cn(
-        "group/spot relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm transition-[box-shadow,border-color] duration-300 hover:border-purple-500/40 hover:shadow-[0_18px_40px_-18px_rgba(168,85,247,0.45)]",
+        "group/spot relative overflow-hidden rounded-2xl border border-white/[0.06] bg-white/[0.03] backdrop-blur-sm transition-[box-shadow,border-color] duration-300 hover:border-[#b98a5e]/40 hover:shadow-[0_18px_40px_-18px_rgba(185,138,94,0.45)]",
         className,
       )}
     >

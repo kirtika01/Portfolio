@@ -4,25 +4,36 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
+    /* ------------------------------------------------------------------
+       THEME ACCENTS — change these to retheme the whole site.
+       Current: roasted coffee accents on a black ground.
+       ------------------------------------------------------------------ */
+    --accent-a: #b98a5e;        /* coffee — primary accent */
+    --accent-mid: #a9764c;      /* roast — gradient midpoint */
+    --accent-b: #8a5a34;        /* dark roast — secondary accent */
+    --accent-deep: #6b4527;     /* bitter — deepest shade */
+    --accent-a-rgb: 185, 138, 94;
+    --accent-b-rgb: 138, 90, 52;
+
+    --background: 24 12% 4%;
     --foreground: 0 0% 98%;
 
-    --card: 240 10% 3.9%;
+    --card: 24 12% 5%;
     --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 3.9%;
+    --popover: 24 12% 5%;
     --popover-foreground: 0 0% 98%;
 
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
 
-    --secondary: 240 3.7% 15.9%;
+    --secondary: 24 10% 14%;
     --secondary-foreground: 0 0% 98%;
 
-    --muted: 240 3.7% 15.9%;
+    --muted: 24 10% 14%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 240 3.7% 15.9%;
+    --accent: 24 10% 14%;
     --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -50,7 +61,7 @@
     text-rendering: optimizeLegibility;
   }
   ::selection {
-    background: rgba(168, 85, 247, 0.35);
+    background: rgba(185, 138, 94, 0.35);
     color: #fff;
   }
 }
@@ -59,23 +70,30 @@
   /* Animated gradient text — replaces the static purple→pink everywhere */
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(90deg, #a855f7, #ec4899, #d946ef, #8b5cf6, #a855f7);
+    background-image: linear-gradient(
+      90deg,
+      var(--accent-a),
+      #e0c9ad,
+      var(--accent-mid),
+      var(--accent-b),
+      var(--accent-a)
+    );
     background-size: 250% auto;
     animation: gradient-shift 6s ease infinite;
   }
   .text-gradient-static {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 via-fuchsia-400 to-pink-500;
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-[#cba982] via-[#c49a72] to-[#8a5a34];
   }
 
   /* Frosted glass surfaces */
   .glass {
-    background: rgba(18, 18, 26, 0.55);
+    background: rgba(22, 17, 13, 0.55);
     backdrop-filter: blur(16px) saturate(140%);
     -webkit-backdrop-filter: blur(16px) saturate(140%);
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
   .glass-strong {
-    background: rgba(12, 12, 18, 0.78);
+    background: rgba(14, 11, 8, 0.78);
     backdrop-filter: blur(20px) saturate(150%);
     -webkit-backdrop-filter: blur(20px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -83,15 +101,15 @@
 
   /* Soft glow used behind avatars / featured elements */
   .glow-purple {
-    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.25), 0 18px 60px -20px rgba(168, 85, 247, 0.55);
+    box-shadow: 0 0 0 1px rgba(185, 138, 94, 0.25), 0 18px 60px -20px rgba(185, 138, 94, 0.55);
   }
 
   /* Gradient hairline border helper */
   .border-gradient {
     border: 1px solid transparent;
     background:
-      linear-gradient(#0b0b12, #0b0b12) padding-box,
-      linear-gradient(120deg, rgba(168, 85, 247, 0.6), rgba(236, 72, 153, 0.6)) border-box;
+      linear-gradient(#0a0806, #0a0806) padding-box,
+      linear-gradient(120deg, rgba(185, 138, 94, 0.6), rgba(138, 90, 52, 0.6)) border-box;
   }
 }
 
@@ -134,22 +152,22 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a1a;
+  background: #181410;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #8b5cf6, #ec4899);
+  background: linear-gradient(to bottom, var(--accent-a), var(--accent-b));
   border-radius: 6px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #7c3aed, #db2777);
+  background: linear-gradient(to bottom, #6b4527, #70472a);
 }
 
 /* For Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #8b5cf6 #1a1a1a;
+  scrollbar-color: #9a6c44 #181410;
 }
 
 @keyframes glitch {
@@ -196,14 +214,14 @@
 
 .glitch::before {
   left: 2px;
-  text-shadow: -2px 0 #8b5cf6;
+  text-shadow: -2px 0 #9a6c44;
   clip: rect(24px, 550px, 90px, 0);
   animation: glitch-anim 2s infinite linear alternate-reverse;
 }
 
 .glitch::after {
   left: -2px;
-  text-shadow: -2px 0 #ec4899;
+  text-shadow: -2px 0 #8a5a34;
   clip: rect(85px, 550px, 140px, 0);
   animation: glitch-anim 2s infinite linear alternate-reverse;
 }

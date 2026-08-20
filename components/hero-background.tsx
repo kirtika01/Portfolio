@@ -30,11 +30,11 @@ export default function HeroBackground() {
 
       {/* Aurora blobs */}
       <motion.div className="absolute left-1/4 top-1/4" style={{ x: blob1X, y: blob1Y }}>
-        <div className="h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-purple-600/30 blur-[120px] animate-aurora" />
+        <div className="h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#9a6c44]/30 blur-[120px] animate-aurora" />
       </motion.div>
       <motion.div className="absolute right-1/4 top-1/3" style={{ x: blob2X, y: blob2Y }}>
         <div
-          className="h-[26rem] w-[26rem] translate-x-1/2 rounded-full bg-fuchsia-600/25 blur-[120px] animate-aurora"
+          className="h-[26rem] w-[26rem] translate-x-1/2 rounded-full bg-[#b98a5e]/25 blur-[120px] animate-aurora"
           style={{ animationDelay: "-6s" }}
         />
       </motion.div>

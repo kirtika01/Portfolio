@@ -61,7 +61,7 @@ export default function ContactSection() {
 
   return (
     <section id="contact" className="relative overflow-hidden bg-black py-20">
-      <div className="pointer-events-none absolute inset-0 select-none opacity-30 [background:radial-gradient(circle_at_30%_20%,rgba(168,85,247,0.15),transparent_60%),radial-gradient(circle_at_70%_80%,rgba(236,72,153,0.12),transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 select-none opacity-30 [background:radial-gradient(circle_at_30%_20%,rgba(185,138,94,0.15),transparent_60%),radial-gradient(circle_at_70%_80%,rgba(138,90,52,0.12),transparent_60%)]" />
 
       <div className="container relative z-10 mx-auto px-4">
         <motion.div
@@ -74,7 +74,7 @@ export default function ContactSection() {
             <span className="text-gradient">Ping Me</span>
             <span className="ml-2">🚀</span>
           </h2>
-          <p className="mx-auto mb-14 max-w-2xl text-center leading-relaxed text-gray-300">
+          <p className="mx-auto mb-14 max-w-2xl text-center leading-relaxed text-stone-300">
             Have a project, a role, or an idea you want to build? Pick whichever way is easiest for
             you — I read every message.
           </p>
@@ -92,15 +92,15 @@ export default function ContactSection() {
                 >
                   <SpotlightCard className="group h-full p-5">
                     <div className="flex items-start gap-4">
-                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-purple-500/20 to-pink-500/20 ring-1 ring-white/10 transition-all duration-300 group-hover:from-purple-500/30 group-hover:to-pink-500/30">
-                        <Icon className="h-5 w-5 text-purple-300" />
+                      <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#b98a5e]/20 to-[#8a5a34]/20 ring-1 ring-white/10 transition-all duration-300 group-hover:from-[#b98a5e]/30 group-hover:to-[#8a5a34]/30">
+                        <Icon className="h-5 w-5 text-[#e0c9ad]" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm text-gray-400">{label}</p>
+                        <p className="text-sm text-stone-400">{label}</p>
                         <p className="truncate font-medium text-white">{value}</p>
-                        <p className="mt-1 text-xs text-gray-500">{note}</p>
+                        <p className="mt-1 text-xs text-stone-500">{note}</p>
                       </div>
-                      <ArrowUpRight className="h-4 w-4 shrink-0 text-gray-600 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-purple-300" />
+                      <ArrowUpRight className="h-4 w-4 shrink-0 text-stone-600 transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-[#e0c9ad]" />
                     </div>
                   </SpotlightCard>
                 </a>
@@ -112,7 +112,7 @@ export default function ContactSection() {
             {/* Availability & socials */}
             <Reveal>
               <SpotlightCard className="h-full p-6 md:p-8">
-                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-gray-300">
+                <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-stone-300">
                   <span className="relative flex h-2 w-2">
                     <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
                     <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
@@ -123,7 +123,7 @@ export default function ContactSection() {
                 <h3 className="mb-3 font-display text-2xl font-semibold">
                   <span className="text-gradient">Let's work together</span>
                 </h3>
-                <p className="mb-8 leading-relaxed text-gray-400">
+                <p className="mb-8 leading-relaxed text-stone-400">
                   Open to full-time roles, freelance builds, and AI training sessions — anywhere in
                   the world.
                 </p>
@@ -131,21 +131,21 @@ export default function ContactSection() {
                 <ul className="mb-8 space-y-4">
                   {details.map(({ icon: Icon, label, value }) => (
                     <li key={label} className="flex items-center gap-3">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-purple-500/20 to-pink-500/20 ring-1 ring-white/10">
-                        <Icon className="h-4 w-4 text-purple-300" />
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-tr from-[#b98a5e]/20 to-[#8a5a34]/20 ring-1 ring-white/10">
+                        <Icon className="h-4 w-4 text-[#e0c9ad]" />
                       </span>
                       <span className="min-w-0">
-                        <span className="block text-xs uppercase tracking-wider text-gray-500">
+                        <span className="block text-xs uppercase tracking-wider text-stone-500">
                           {label}
                         </span>
-                        <span className="block text-sm text-gray-200">{value}</span>
+                        <span className="block text-sm text-stone-200">{value}</span>
                       </span>
                     </li>
                   ))}
                 </ul>
 
                 <div className="border-t border-white/10 pt-6">
-                  <p className="mb-4 text-sm text-gray-400">Find me online</p>
+                  <p className="mb-4 text-sm text-stone-400">Find me online</p>
                   <div className="mb-6 flex gap-3">
                     <SocialIcon icon={<Github className="h-5 w-5" />} href="https://github.com/kirtika01" label="GitHub" />
                     <SocialIcon
@@ -163,7 +163,7 @@ export default function ContactSection() {
                     href={CV_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full border border-pink-500/50 bg-pink-500/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-pink-500/20"
+                    className="inline-flex items-center gap-2 rounded-full border border-[#8a5a34]/50 bg-[#8a5a34]/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8a5a34]/20"
                   >
                     <Download className="h-4 w-4" />
                     Download CV
@@ -178,7 +178,7 @@ export default function ContactSection() {
                 <h3 className="mb-2 font-display text-2xl font-semibold">
                   <span className="text-gradient">Send a message</span>
                 </h3>
-                <p className="mb-6 text-sm text-gray-400">
+                <p className="mb-6 text-sm text-stone-400">
                   Tell me a little about what you're building.
                 </p>
 
@@ -202,13 +202,13 @@ export default function ContactSection() {
                     type="submit"
                     shimmer
                     strength={0.12}
-                    className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3.5 font-medium text-white shadow-lg shadow-purple-500/20"
+                    className="w-full rounded-xl bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] px-6 py-3.5 font-medium text-white shadow-lg shadow-[#b98a5e]/20"
                   >
                     Send Message
                     <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </MagneticButton>
 
-                  <p className="text-center text-xs text-gray-500">
+                  <p className="text-center text-xs text-stone-500">
                     Your message comes straight to my inbox — never shared.
                   </p>
                 </form>
@@ -231,9 +231,9 @@ interface FloatingFieldProps {
 
 function FloatingField({ id, name, label, type = "text", textarea }: FloatingFieldProps) {
   const shared =
-    "peer w-full rounded-xl border border-white/10 bg-white/5 px-4 pb-2.5 pt-6 text-white placeholder-transparent outline-none transition-colors focus:border-purple-500/70 focus:ring-2 focus:ring-purple-500/20"
+    "peer w-full rounded-xl border border-white/10 bg-white/5 px-4 pb-2.5 pt-6 text-white placeholder-transparent outline-none transition-colors focus:border-[#b98a5e]/70 focus:ring-2 focus:ring-[#b98a5e]/20"
   const labelCls =
-    "pointer-events-none absolute left-4 top-2 text-xs text-purple-300 transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-500 peer-focus:top-2 peer-focus:text-xs peer-focus:text-purple-300"
+    "pointer-events-none absolute left-4 top-2 text-xs text-[#e0c9ad] transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-base peer-placeholder-shown:text-stone-500 peer-focus:top-2 peer-focus:text-xs peer-focus:text-[#e0c9ad]"
 
   return (
     <div className="relative">

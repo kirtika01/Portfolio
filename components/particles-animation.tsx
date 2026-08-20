@@ -97,7 +97,7 @@ function ParticlesInstance({ count = 2000, size = 0.05, radius = 5 }) {
   return (
     <points ref={pointsRef} onPointerOver={() => setHovered(true)} onPointerOut={() => setHovered(false)}>
       <primitive object={bufferGeometry} attach="geometry" />
-      <PointMaterial transparent color="#8b5cf6" size={size} sizeAttenuation={true} depthWrite={false} />
+      <PointMaterial transparent color="#9a6c44" size={size} sizeAttenuation={true} depthWrite={false} />
     </points>
   )
 }

@@ -44,13 +44,13 @@ export default function ProjectDetail({ project }: { project: Project }) {
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-black/70 backdrop-blur-md">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <Link href="/" className="font-display text-xl font-bold text-white">
-            Kirtika<span className="text-pink-500">.</span>
+            Kirtika<span className="text-[#8a5a34]">.</span>
           </Link>
           <div className="flex items-center gap-4">
-            <Link href="/#work" className="text-sm text-gray-400 transition-colors hover:text-purple-300">
+            <Link href="/#work" className="text-sm text-stone-400 transition-colors hover:text-[#e0c9ad]">
               Projects
             </Link>
-            <Link href="/#contact" className="text-sm text-gray-400 transition-colors hover:text-purple-300">
+            <Link href="/#contact" className="text-sm text-stone-400 transition-colors hover:text-[#e0c9ad]">
               Contact
             </Link>
             <a
@@ -58,7 +58,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
-              className="text-gray-400 transition-colors hover:text-white"
+              className="text-stone-400 transition-colors hover:text-white"
             >
               <Github className="h-4 w-4" />
             </a>
@@ -67,7 +67,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
-              className="text-gray-400 transition-colors hover:text-white"
+              className="text-stone-400 transition-colors hover:text-white"
             >
               <Linkedin className="h-4 w-4" />
             </a>
@@ -77,13 +77,13 @@ export default function ProjectDetail({ project }: { project: Project }) {
 
       {/* Hero */}
       <section className="relative overflow-hidden pb-12 pt-28 md:pt-32">
-        <div className="pointer-events-none absolute inset-0 select-none opacity-40 [background:radial-gradient(circle_at_25%_15%,rgba(168,85,247,0.18),transparent_60%),radial-gradient(circle_at_75%_10%,rgba(236,72,153,0.14),transparent_55%)]" />
+        <div className="pointer-events-none absolute inset-0 select-none opacity-40 [background:radial-gradient(circle_at_25%_15%,rgba(185,138,94,0.18),transparent_60%),radial-gradient(circle_at_75%_10%,rgba(138,90,52,0.14),transparent_55%)]" />
 
         <div ref={heroRef} className="container relative z-10 mx-auto px-4">
           <Link
             href="/#work"
             data-hero-item
-            className="mb-8 inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-purple-300"
+            className="mb-8 inline-flex items-center gap-2 text-sm text-stone-400 transition-colors hover:text-[#e0c9ad]"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Projects
@@ -101,12 +101,12 @@ export default function ProjectDetail({ project }: { project: Project }) {
                 </span>
               )}
               {period && (
-                <span className="rounded-full border border-purple-500/20 bg-purple-500/10 px-3 py-1 text-xs text-purple-300">
+                <span className="rounded-full border border-[#b98a5e]/20 bg-[#b98a5e]/10 px-3 py-1 text-xs text-[#e0c9ad]">
                   {period}
                 </span>
               )}
               {role && (
-                <span className="rounded-full border border-white/[0.06] bg-white/5 px-3 py-1 text-xs text-gray-300">
+                <span className="rounded-full border border-white/[0.06] bg-white/5 px-3 py-1 text-xs text-stone-300">
                   {role}
                 </span>
               )}
@@ -115,7 +115,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             <h1 data-hero-item className="mb-5 font-display text-3xl font-bold leading-tight md:text-5xl">
               <span className="text-gradient">{title}</span>
             </h1>
-            <p data-hero-item className="mb-8 max-w-3xl text-lg leading-relaxed text-gray-300">
+            <p data-hero-item className="mb-8 max-w-3xl text-lg leading-relaxed text-stone-300">
               {tagline}
             </p>
 
@@ -127,7 +127,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
                   <a href={liveUrl} target="_blank" rel="noopener noreferrer">
                     <MagneticButton
                       shimmer
-                      className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 font-medium text-white shadow-lg shadow-purple-500/25"
+                      className="rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] px-6 py-3 font-medium text-white shadow-lg shadow-[#b98a5e]/25"
                     >
                       <Radio className="h-4 w-4" />
                       Visit Live Project
@@ -137,7 +137,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
                 )}
                 {githubUrl && (
                   <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-                    <MagneticButton className="rounded-full border border-purple-500/60 bg-white/5 px-6 py-3 font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-purple-400 hover:bg-purple-500/10">
+                    <MagneticButton className="rounded-full border border-[#b98a5e]/60 bg-white/5 px-6 py-3 font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-[#cba982] hover:bg-[#b98a5e]/10">
                       <Github className="h-4 w-4" />
                       View on GitHub
                     </MagneticButton>
@@ -153,7 +153,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
                 <Reveal key={s.label} delay={i * 0.08}>
                   <SpotlightCard className="p-5 text-center">
                     <p className="font-display text-3xl font-bold text-gradient">{s.value}</p>
-                    <p className="mt-1 text-sm text-gray-400">{s.label}</p>
+                    <p className="mt-1 text-sm text-stone-400">{s.label}</p>
                   </SpotlightCard>
                 </Reveal>
               ))}
@@ -175,12 +175,12 @@ export default function ProjectDetail({ project }: { project: Project }) {
                     <h2 className="mb-4 font-display text-2xl font-semibold">
                       <span className="text-gradient">{section.heading}</span>
                     </h2>
-                    {section.body && <p className="leading-relaxed text-gray-300">{section.body}</p>}
+                    {section.body && <p className="leading-relaxed text-stone-300">{section.body}</p>}
                     {section.bullets && (
                       <ul className={`space-y-3 ${section.body ? "mt-4" : ""}`}>
                         {section.bullets.map((b) => (
-                          <li key={b} className="flex gap-3 leading-relaxed text-gray-300">
-                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-purple-400 to-pink-400" />
+                          <li key={b} className="flex gap-3 leading-relaxed text-stone-300">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-[#cba982] to-[#c09468]" />
                             <span>{b}</span>
                           </li>
                         ))}
@@ -198,8 +198,8 @@ export default function ProjectDetail({ project }: { project: Project }) {
                   </h2>
                   <ul className="space-y-3">
                     {features.map((feature) => (
-                      <li key={feature} className="flex gap-3 leading-relaxed text-gray-300">
-                        <Check className="mt-1 h-4 w-4 shrink-0 text-purple-400" />
+                      <li key={feature} className="flex gap-3 leading-relaxed text-stone-300">
+                        <Check className="mt-1 h-4 w-4 shrink-0 text-[#cba982]" />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -213,12 +213,12 @@ export default function ProjectDetail({ project }: { project: Project }) {
                     <h2 className="mb-4 font-display text-2xl font-semibold">
                       <span className="text-gradient">{section.heading}</span>
                     </h2>
-                    {section.body && <p className="leading-relaxed text-gray-300">{section.body}</p>}
+                    {section.body && <p className="leading-relaxed text-stone-300">{section.body}</p>}
                     {section.bullets && (
                       <ul className={`space-y-3 ${section.body ? "mt-4" : ""}`}>
                         {section.bullets.map((b) => (
-                          <li key={b} className="flex gap-3 leading-relaxed text-gray-300">
-                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-purple-400 to-pink-400" />
+                          <li key={b} className="flex gap-3 leading-relaxed text-stone-300">
+                            <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gradient-to-r from-[#cba982] to-[#c09468]" />
                             <span>{b}</span>
                           </li>
                         ))}
@@ -239,7 +239,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
                     {techStack.map((item) => (
                       <span
                         key={item}
-                        className="rounded-full bg-gradient-to-r from-purple-500/15 to-pink-500/15 px-2.5 py-1 text-xs text-purple-200 ring-1 ring-white/5"
+                        className="rounded-full bg-gradient-to-r from-[#b98a5e]/15 to-[#8a5a34]/15 px-2.5 py-1 text-xs text-[#f0e2d0] ring-1 ring-white/5"
                       >
                         {item}
                       </span>
@@ -257,7 +257,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
                     {tags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded-full border border-white/[0.06] bg-white/5 px-2.5 py-1 text-xs text-gray-300"
+                        className="rounded-full border border-white/[0.06] bg-white/5 px-2.5 py-1 text-xs text-stone-300"
                       >
                         {tag}
                       </span>
@@ -265,7 +265,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
                   </div>
                   <Link
                     href="/#contact"
-                    className="inline-flex items-center gap-2 rounded-full border border-pink-500/50 bg-pink-500/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-pink-500/20"
+                    className="inline-flex items-center gap-2 rounded-full border border-[#8a5a34]/50 bg-[#8a5a34]/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8a5a34]/20"
                   >
                     Get in touch
                     <ArrowUpRight className="h-4 w-4" />
@@ -278,7 +278,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           <div className="mt-12 text-center">
             <Link
               href="/#work"
-              className="inline-flex items-center gap-2 text-sm text-gray-400 transition-colors hover:text-purple-300"
+              className="inline-flex items-center gap-2 text-sm text-stone-400 transition-colors hover:text-[#e0c9ad]"
             >
               <ArrowLeft className="h-4 w-4" />
               Back to Projects

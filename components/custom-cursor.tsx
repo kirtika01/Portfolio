@@ -103,8 +103,8 @@ export default function CustomCursor() {
               width: isHover ? (label ? 72 : 46) : isText ? 5 : 36,
               height: isHover ? (label ? 72 : 46) : isText ? 26 : 36,
               borderRadius: isText ? 4 : 999,
-              backgroundColor: isHover && label ? "rgba(168,85,247,0.85)" : isHover ? "rgba(168,85,247,0.12)" : "rgba(255,255,255,0)",
-              borderColor: isText ? "rgba(236,72,153,0.9)" : isHover ? "rgba(168,85,247,0.7)" : "rgba(255,255,255,0.4)",
+              backgroundColor: isHover && label ? "rgba(185,138,94,0.85)" : isHover ? "rgba(185,138,94,0.12)" : "rgba(255,255,255,0)",
+              borderColor: isText ? "rgba(138,90,52,0.9)" : isHover ? "rgba(185,138,94,0.7)" : "rgba(255,255,255,0.4)",
               scale: down ? 0.82 : 1,
             }}
             transition={{ type: "spring", stiffness: 320, damping: 22 }}
@@ -130,7 +130,7 @@ export default function CustomCursor() {
       <motion.div className="pointer-events-none fixed left-0 top-0 z-[120]" style={{ x: dotX, y: dotY }}>
         <div className="-translate-x-1/2 -translate-y-1/2">
           <motion.div
-            className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 mix-blend-difference"
+            className="rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] mix-blend-difference"
             animate={{
               width: isHover || isText ? 0 : down ? 14 : 8,
               height: isHover || isText ? 0 : down ? 14 : 8,
@@ -146,7 +146,7 @@ export default function CustomCursor() {
         {ripples.map((r) => (
           <motion.div
             key={r.id}
-            className="pointer-events-none fixed z-[119] rounded-full border border-purple-400/70"
+            className="pointer-events-none fixed z-[119] rounded-full border border-[#cba982]/70"
             style={{ left: r.x, top: r.y }}
             initial={{ width: 8, height: 8, x: "-50%", y: "-50%", opacity: 0.7 }}
             animate={{ width: 80, height: 80, x: "-50%", y: "-50%", opacity: 0 }}

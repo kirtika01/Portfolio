@@ -21,7 +21,7 @@ export default function SocialIcon({ icon, href, label, className = "", onClick 
         aria-label={label}
         target="_blank"
         rel="noopener noreferrer"
-        className={`flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-all duration-300 hover:scale-110 hover:border-transparent hover:bg-gradient-to-r hover:from-purple-500 hover:to-pink-500 hover:shadow-lg hover:shadow-purple-500/30 active:scale-95 ${className}`}
+        className={`flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white transition-all duration-300 hover:scale-110 hover:border-transparent hover:bg-gradient-to-r hover:from-[#b98a5e] hover:to-[#8a5a34] hover:shadow-lg hover:shadow-[#b98a5e]/30 active:scale-95 ${className}`}
         onClick={onClick}
       >
         <span>{icon}</span>

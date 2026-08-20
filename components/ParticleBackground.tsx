@@ -46,10 +46,10 @@ const ParticleBackground = () => {
       },
       particles: {
         color: {
-          value: ["#8B5CF6", "#EC4899"], // Purple to Pink
+          value: ["#9A6C44", "#8A5A34"], // Purple to Pink
         },
         links: {
-          color: "#a855f7", // A mid-point between purple and pink
+          color: "#b98a5e", // A mid-point between purple and pink
           distance: 150,
           enable: true,
           opacity: 0.5,

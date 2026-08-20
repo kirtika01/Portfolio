@@ -19,7 +19,7 @@ const issuerStyles: Record<string, { ring: string; icon: string }> = {
 }
 
 export default function CertificateCard({ title, issuer, date, link }: CertificateCardProps) {
-  const style = issuerStyles[issuer] ?? { ring: "from-purple-500/30 to-pink-500/30", icon: "text-purple-400" }
+  const style = issuerStyles[issuer] ?? { ring: "from-[#b98a5e]/30 to-[#8a5a34]/30", icon: "text-[#cba982]" }
 
   return (
     <Reveal className="h-full">
@@ -33,14 +33,14 @@ export default function CertificateCard({ title, issuer, date, link }: Certifica
         </div>
         <div className="flex-1">
           <h3 className="mb-1 font-display text-lg font-bold text-white">{title}</h3>
-          <p className="text-sm text-purple-400">{issuer}</p>
-          <p className="mb-2 text-xs text-gray-500">{date}</p>
+          <p className="text-sm text-[#cba982]">{issuer}</p>
+          <p className="mb-2 text-xs text-stone-500">{date}</p>
           {link && (
             <a
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm text-gray-300 transition-colors hover:text-white"
+              className="inline-flex items-center gap-1 text-sm text-stone-300 transition-colors hover:text-white"
             >
               <span>View Certificate</span>
               <ExternalLink className="h-4 w-4" />

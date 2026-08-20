@@ -40,7 +40,7 @@ export default function InteractiveShapes() {
           key={index}
           className={`absolute ${shape.type === "circle" ? "rounded-full" : ""} 
                       ${shape.type === "triangle" ? "triangle" : ""} 
-                      bg-gradient-to-r from-purple-500 to-pink-500 opacity-10 hover:opacity-20 transition-opacity`}
+                      bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] opacity-10 hover:opacity-20 transition-opacity`}
           style={{
             width: shape.size,
             height: shape.size,

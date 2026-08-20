@@ -12,7 +12,7 @@ interface Box {
 
 const Box = React.memo(({ x, y, size, delay }: Omit<Box, "id">) => (
   <div
-    className="absolute bg-gray-300 opacity-10 animate-float"
+    className="absolute bg-stone-300 opacity-10 animate-float"
     style={{
       width: size,
       height: size,

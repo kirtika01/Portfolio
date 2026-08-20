@@ -170,9 +170,9 @@ export default function AboutMe() {
         <div className="md:w-1/3">
           <div className="group relative mx-auto h-64 w-64">
             {/* Glow */}
-            <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-tr from-purple-600 via-fuchsia-500 to-pink-500 opacity-30 blur-2xl transition-opacity duration-500 group-hover:opacity-50" />
+            <div className="absolute -inset-4 rounded-[2rem] bg-gradient-to-tr from-[#9a6c44] via-[#a9764c] to-[#8a5a34] opacity-30 blur-2xl transition-opacity duration-500 group-hover:opacity-50" />
             {/* Gradient ring frame */}
-            <div className="relative h-full w-full rounded-3xl bg-gradient-to-tr from-purple-500 via-fuchsia-500 to-pink-500 p-[2px]">
+            <div className="relative h-full w-full rounded-3xl bg-gradient-to-tr from-[#b98a5e] via-[#a9764c] to-[#8a5a34] p-[2px]">
               <div className="relative h-full w-full overflow-hidden rounded-3xl">
                 <Image
                   src="/IMG_20221224_20003544.jpg"
@@ -232,7 +232,7 @@ export default function AboutMe() {
           <div
             ref={lineRef}
             style={{ transformOrigin: "top" }}
-            className="absolute left-1/2 top-0 hidden h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-purple-500 via-fuchsia-500 to-pink-500 md:block"
+            className="absolute left-1/2 top-0 hidden h-full w-0.5 -translate-x-1/2 bg-gradient-to-b from-[#b98a5e] via-[#a9764c] to-[#8a5a34] md:block"
           />
 
           <div className="space-y-10">
@@ -246,13 +246,13 @@ export default function AboutMe() {
                 <div className="md:w-1/2">
                   <SpotlightCard className="p-6">
                     <div className="flex flex-col items-center gap-4 md:flex-row md:items-start">
-                      <div className="mx-auto flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-purple-500/20 to-pink-500/20 ring-1 ring-white/10 md:mx-0 md:h-14 md:w-14">
-                        <item.icon className="h-7 w-7 text-purple-300 md:h-6 md:w-6" aria-hidden="true" />
+                      <div className="mx-auto flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#b98a5e]/20 to-[#8a5a34]/20 ring-1 ring-white/10 md:mx-0 md:h-14 md:w-14">
+                        <item.icon className="h-7 w-7 text-[#e0c9ad] md:h-6 md:w-6" aria-hidden="true" />
                       </div>
                       <div className="text-center md:text-left">
                         <h3 className="font-display text-xl font-bold text-white">{item.role}</h3>
-                        <h4 className="text-lg text-purple-400">{item.company}</h4>
-                        <div className="mt-2 flex flex-col items-center gap-1.5 text-sm text-gray-400 md:items-start">
+                        <h4 className="text-lg text-[#cba982]">{item.company}</h4>
+                        <div className="mt-2 flex flex-col items-center gap-1.5 text-sm text-stone-400 md:items-start">
                           <span className="inline-flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
                             {item.period}
@@ -268,7 +268,7 @@ export default function AboutMe() {
                         </div>
                       </div>
                     </div>
-                    <p className="mt-4 text-center text-sm text-gray-300 md:text-left">{item.description}</p>
+                    <p className="mt-4 text-center text-sm text-stone-300 md:text-left">{item.description}</p>
                   </SpotlightCard>
                 </div>
 
@@ -276,8 +276,8 @@ export default function AboutMe() {
                 <div className="hidden md:block md:w-1/2" />
 
                 {/* Timeline dot */}
-                <div className="absolute left-1/2 top-7 hidden h-4 w-4 -translate-x-1/2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 ring-4 ring-black md:block">
-                  <span className="absolute inset-0 animate-pulse-ring rounded-full bg-purple-500/60" />
+                <div className="absolute left-1/2 top-7 hidden h-4 w-4 -translate-x-1/2 rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] ring-4 ring-black md:block">
+                  <span className="absolute inset-0 animate-pulse-ring rounded-full bg-[#b98a5e]/60" />
                 </div>
               </div>
             ))}
@@ -294,7 +294,7 @@ export default function AboutMe() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {Object.entries(skillsData).map(([category, skills]) => (
             <SpotlightCard key={category} className="p-6">
-              <h4 className="mb-5 text-center font-display text-xl font-bold text-purple-400 md:text-left">{category}</h4>
+              <h4 className="mb-5 text-center font-display text-xl font-bold text-[#cba982] md:text-left">{category}</h4>
               <div className="grid grid-cols-1 gap-x-6 gap-y-2 md:grid-cols-2">
                 {skills.map((skill) => (
                   <SkillBar key={skill.name} name={skill.name} proficiency={skill.proficiency} />
@@ -341,14 +341,14 @@ function SkillBar({ name, proficiency }: { name: string; proficiency: number }) 
   return (
     <div className="mb-3">
       <div className="mb-1.5 flex justify-between">
-        <span className="text-sm text-gray-200">{name}</span>
-        <span className="text-sm text-gray-400">{proficiency}%</span>
+        <span className="text-sm text-stone-200">{name}</span>
+        <span className="text-sm text-stone-400">{proficiency}%</span>
       </div>
       <div className="h-2 overflow-hidden rounded-full bg-white/10">
         <div
           ref={barRef}
           style={{ width: 0 }}
-          className="h-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 shadow-[0_0_12px_rgba(168,85,247,0.6)]"
+          className="h-full rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] shadow-[0_0_12px_rgba(185,138,94,0.6)]"
         />
       </div>
     </div>

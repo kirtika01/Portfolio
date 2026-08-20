@@ -67,7 +67,7 @@ export default function MagneticButton({
       transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
       style={{ x: sx, y: sy }}
       className={cn(
-        "group relative overflow-hidden transition-shadow duration-300 hover:shadow-[0_10px_30px_-10px_rgba(168,85,247,0.6)]",
+        "group relative overflow-hidden transition-shadow duration-300 hover:shadow-[0_10px_30px_-10px_rgba(185,138,94,0.6)]",
         className,
       )}
       {...rest}

@@ -116,13 +116,13 @@ export default function Home() {
             {/* Soft accent glow behind the name */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[26rem] w-[46rem] max-w-[120vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(168,85,247,0.16),rgba(236,72,153,0.08)_45%,transparent_70%)] blur-2xl"
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[26rem] w-[46rem] max-w-[120vw] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(185,138,94,0.16),rgba(138,90,52,0.08)_45%,transparent_70%)] blur-2xl"
             />
 
             {/* Availability pill */}
             <div
               data-hero-item
-              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-gray-300 backdrop-blur-sm"
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm text-stone-300 backdrop-blur-sm"
             >
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
@@ -135,7 +135,7 @@ export default function Home() {
               Hey! It's <span className="text-gradient">G. Kirtika</span>
             </h1>
 
-            <h2 data-hero-item className="mb-8 flex flex-wrap items-center justify-center gap-x-2 text-xl text-gray-300 md:text-2xl">
+            <h2 data-hero-item className="mb-8 flex flex-wrap items-center justify-center gap-x-2 text-xl text-stone-300 md:text-2xl">
               <span aria-hidden="true">🚀</span>
               <RoleRotator roles={["Senior Backend Developer", "AI Engineer", "Building Intelligent Agents", "Tech Explorer"]} />
             </h2>
@@ -144,14 +144,14 @@ export default function Home() {
               <ScrollLink to="work" smooth={true} duration={500}>
                 <MagneticButton
                   shimmer
-                  className="rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-7 py-3 font-medium text-white shadow-lg shadow-purple-500/25"
+                  className="rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] px-7 py-3 font-medium text-white shadow-lg shadow-[#b98a5e]/25"
                 >
                   View Projects
                   <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </MagneticButton>
               </ScrollLink>
               <ScrollLink to="contact" smooth={true} duration={500}>
-                <MagneticButton className="rounded-full border border-purple-500/60 bg-white/5 px-7 py-3 font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-purple-400 hover:bg-purple-500/10">
+                <MagneticButton className="rounded-full border border-[#b98a5e]/60 bg-white/5 px-7 py-3 font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-[#cba982] hover:bg-[#b98a5e]/10">
                   Contact Me
                 </MagneticButton>
               </ScrollLink>
@@ -164,17 +164,17 @@ export default function Home() {
           to="about"
           smooth={true}
           duration={500}
-          className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 cursor-pointer flex-col items-center gap-2 text-gray-500 transition-colors hover:text-white md:flex"
+          className="absolute bottom-8 left-1/2 z-10 hidden -translate-x-1/2 cursor-pointer flex-col items-center gap-2 text-stone-500 transition-colors hover:text-white md:flex"
         >
           <span className="text-xs uppercase tracking-[0.25em]">Scroll</span>
-          <span className="flex h-9 w-5 items-start justify-center rounded-full border border-gray-600 p-1">
-            <span className="h-2 w-1 animate-scroll-dot rounded-full bg-gradient-to-b from-purple-400 to-pink-400" />
+          <span className="flex h-9 w-5 items-start justify-center rounded-full border border-stone-600 p-1">
+            <span className="h-2 w-1 animate-scroll-dot rounded-full bg-gradient-to-b from-[#cba982] to-[#c09468]" />
           </span>
         </ScrollLink>
       </section>
 
       {/* About Section */}
-      <section id="about" className="bg-gradient-to-b from-black to-gray-900 py-20">
+      <section id="about" className="bg-gradient-to-b from-black to-stone-900 py-20">
         <div className="container mx-auto px-4">
           <AboutMe />
         </div>
@@ -184,7 +184,7 @@ export default function Home() {
       <ServicesSection />
 
       {/* Work Section */}
-      <section id="work" className="bg-gradient-to-b from-gray-900 to-black py-20">
+      <section id="work" className="bg-gradient-to-b from-stone-900 to-black py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={sectionTitle.hidden}
@@ -193,7 +193,7 @@ export default function Home() {
             viewport={{ once: true }}
           >
             <SectionHeading title="What I've Built" emoji="🏗️" />
-            <p className="mx-auto mb-12 -mt-6 max-w-2xl text-center leading-relaxed text-gray-400">
+            <p className="mx-auto mb-12 -mt-6 max-w-2xl text-center leading-relaxed text-stone-400">
               From a production marketplace serving web and mobile to research-grade models. Tap any
               project to read the full story.
             </p>
@@ -232,7 +232,7 @@ export default function Home() {
       </section>
 
       {/* Research Publications Section */}
-      <section id="publications" className="bg-gradient-to-b from-black to-gray-900 py-20">
+      <section id="publications" className="bg-gradient-to-b from-black to-stone-900 py-20">
         <div className="container mx-auto px-4">
           <motion.div
             initial={sectionTitle.hidden}
@@ -259,10 +259,10 @@ export default function Home() {
       <ContactSection />
 
       {/* Footer */}
-      <footer className="relative overflow-hidden border-t border-white/5 bg-gradient-to-t from-gray-900 to-black py-16">
-        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-40 w-[40rem] max-w-full -translate-y-1/2 rounded-full bg-purple-600/10 blur-[100px]" />
+      <footer className="relative overflow-hidden border-t border-white/5 bg-gradient-to-t from-stone-900 to-black py-16">
+        <div className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-40 w-[40rem] max-w-full -translate-y-1/2 rounded-full bg-[#9a6c44]/10 blur-[100px]" />
         <div className="container relative z-10 mx-auto px-4 text-center">
-          <p className="mb-2 inline-flex items-center gap-2 text-sm uppercase tracking-[0.3em] text-purple-400">
+          <p className="mb-2 inline-flex items-center gap-2 text-sm uppercase tracking-[0.3em] text-[#cba982]">
             <Sparkles className="h-4 w-4" /> Let's connect
           </p>
           <h3 className="mx-auto mb-8 max-w-2xl font-display text-3xl font-bold md:text-4xl">
@@ -274,7 +274,7 @@ export default function Home() {
             <SocialIcon icon={<Linkedin />} href="https://www.linkedin.com/in/g-kirtika-426687254/" label="LinkedIn" />
           </div>
 
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-stone-500">
             <p>© {new Date().getFullYear()} G. Kirtika. All rights reserved.</p>
             <ContactEmail />
           </div>

@@ -75,7 +75,7 @@ export default function Navbar() {
       {/* Scroll progress bar */}
       <motion.div
         style={{ scaleX: progress }}
-        className="absolute bottom-0 left-0 right-0 h-px origin-left bg-gradient-to-r from-purple-500 via-fuchsia-500 to-pink-500"
+        className="absolute bottom-0 left-0 right-0 h-px origin-left bg-gradient-to-r from-[#b98a5e] via-[#a9764c] to-[#8a5a34]"
       />
 
       <div className="container mx-auto flex items-center justify-between px-4 md:px-8">
@@ -84,7 +84,7 @@ export default function Navbar() {
           className="font-display text-2xl font-bold text-white"
           onClick={(e) => scrollToSection(e, "#home")}
         >
-          Kirtika<span className="text-pink-500">.</span>
+          Kirtika<span className="text-[#8a5a34]">.</span>
         </Link>
 
         {/* Desktop Navigation */}
@@ -99,7 +99,7 @@ export default function Navbar() {
                   href={link.href}
                   onClick={(e) => scrollToSection(e, link.href)}
                   className={`relative rounded-full px-3 py-1.5 text-sm transition-colors duration-300 ${
-                    isActive ? "text-white" : "text-gray-400 hover:text-white"
+                    isActive ? "text-white" : "text-stone-400 hover:text-white"
                   }`}
                 >
                   {isActive && (
@@ -120,7 +120,7 @@ export default function Navbar() {
               href="https://github.com/kirtika01"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 transition-colors duration-300 hover:text-white"
+              className="text-stone-400 transition-colors duration-300 hover:text-white"
               aria-label="GitHub"
               variants={iconVariants}
               initial="initial"
@@ -132,7 +132,7 @@ export default function Navbar() {
               href="https://www.linkedin.com/in/g-kirtika-426687254/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 transition-colors duration-300 hover:text-white"
+              className="text-stone-400 transition-colors duration-300 hover:text-white"
               aria-label="LinkedIn"
               variants={iconVariants}
               initial="initial"
@@ -149,7 +149,7 @@ export default function Navbar() {
             href="https://github.com/kirtika01"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-300 transition-colors duration-300 hover:text-white"
+            className="text-stone-300 transition-colors duration-300 hover:text-white"
             aria-label="GitHub"
             variants={iconVariants}
             initial="initial"
@@ -175,7 +175,7 @@ export default function Navbar() {
             animate={{ opacity: 1, clipPath: "circle(150% at calc(100% - 2rem) 2rem)" }}
             exit={{ opacity: 0, clipPath: "circle(0% at calc(100% - 2rem) 2rem)" }}
             transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#07070b]/95 backdrop-blur-xl md:hidden"
+            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#070503]/95 backdrop-blur-xl md:hidden"
           >
             <div className="flex flex-col items-center gap-6">
               {navLinks.map((link, index) => {
@@ -192,7 +192,7 @@ export default function Navbar() {
                       href={link.href}
                       onClick={(e) => scrollToSection(e, link.href)}
                       className={`font-display text-3xl font-semibold transition-colors ${
-                        isActive ? "text-gradient-static" : "text-gray-300 hover:text-white"
+                        isActive ? "text-gradient-static" : "text-stone-300 hover:text-white"
                       }`}
                     >
                       {link.name}
@@ -213,7 +213,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="GitHub"
-                className="text-gray-400 hover:text-white"
+                className="text-stone-400 hover:text-white"
               >
                 <Github size={26} />
               </a>
@@ -222,7 +222,7 @@ export default function Navbar() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="text-gray-400 hover:text-white"
+                className="text-stone-400 hover:text-white"
               >
                 <Linkedin size={26} />
               </a>
