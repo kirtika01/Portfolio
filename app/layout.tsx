@@ -18,11 +18,33 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 })
 
+const SITE_URL = "https://kirtikadev.in"
+const TITLE = "G. Kirtika - AI Developer & Full Stack Engineer"
+const DESCRIPTION =
+  "Portfolio of G Kirtika, a Senior Backend Developer and AI Engineer specializing in building intelligent agents and full-stack applications."
+
 export const metadata: Metadata = {
-  title: "G. Kirtika - AI Developer & Full Stack Engineer",
-  description:
-    "Portfolio of G Kirtika, a Senior Backend Developer and AI Engineer specializing in building intelligent agents and full-stack applications.",
+  // Absolute base for canonical URLs and social previews.
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
   generator: "Next.js",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "G. Kirtika",
+    title: TITLE,
+    description: DESCRIPTION,
+    locale: "en_IN",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+  },
 }
 
 export default function RootLayout({
