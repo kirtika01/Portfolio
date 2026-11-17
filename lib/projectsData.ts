@@ -20,7 +20,12 @@
  *  githubUrl   OPTIONAL. If present, a "View on GitHub" button shows.
  *              If absent, NO GitHub button is rendered at all.
  *  liveUrl     OPTIONAL. If present, a "Visit Live Project" button shows.
- *  period      OPTIONAL. Date range chip.
+ *  pypiUrl     OPTIONAL. If present, a "View on PyPI" button + "On PyPI" badge show.
+ *  install     OPTIONAL. A "Get started" card: requirements plus copyable commands.
+ *              Each step is { command, note? }. The only place commands render.
+ *  screenshot  OPTIONAL. One image on the detail page. Put the file in
+ *              public/projects/ and give its real pixel width/height.
+ *  period     OPTIONAL. Date range chip.
  *  role        OPTIONAL. Your role chip on the detail page.
  *  stats       OPTIONAL. Up to 3 headline numbers on the detail hero.
  *  featured    OPTIONAL. Renders the card as the large hero card in the grid.
@@ -35,6 +40,24 @@ export interface ProjectSection {
   bullets?: string[]
 }
 
+export interface InstallStep {
+  command: string
+  note?: string
+}
+
+export interface ProjectInstall {
+  requirements?: string[]
+  steps: InstallStep[]
+}
+
+export interface ProjectScreenshot {
+  src: string
+  alt: string
+  width: number
+  height: number
+  caption?: string
+}
+
 export interface Project {
   slug: string
   title: string
@@ -46,6 +69,9 @@ export interface Project {
   sections: ProjectSection[]
   githubUrl?: string
   liveUrl?: string
+  pypiUrl?: string
+  install?: ProjectInstall
+  screenshot?: ProjectScreenshot
   period?: string
   role?: string
   stats?: { label: string; value: string }[]
@@ -124,6 +150,126 @@ export const projects: Project[] = [
           "Personally identifiable fields are AES-256-GCM encrypted at rest, with decryption confined to a single helper.",
           "Revenue is stored per-currency instead of being flattened into one number at write time.",
           "Roughly 160 versioned SQL migrations keep the schema reproducible across environments.",
+        ],
+      },
+    ],
+  },
+
+  // ==========================================================================
+  //  VAANI — published on PyPI. Deliberately NO githubUrl: the portfolio links
+  //  to the PyPI page only, never the source repo.
+  // ==========================================================================
+  {
+    slug: "vaani",
+    title: "Vaani — Talk to Your Coding Agent",
+    tagline:
+      "Speak to Claude Code and hear it answer — local speech in and out, in English and Hindi, on macOS and Windows. No API key, nothing leaves your machine.",
+    summary:
+      "A voice layer for Claude Code: speak your request in English, Hindi or Hinglish and hear the reply as it's written. Published on PyPI as vaani-voice.",
+    tags: ["Python", "Speech AI", "Claude Code", "Hindi / Hinglish", "PyPI"],
+    period: "2026",
+    role: "Creator & maintainer",
+    featured: true,
+    span: "md:col-span-6",
+    pypiUrl: "https://pypi.org/project/vaani-voice/",
+    stats: [
+      { label: "First spoken word after a question", value: "~2.2s" },
+      { label: "Automated tests", value: "923" },
+      { label: "Languages, mixed freely", value: "EN + HI" },
+    ],
+    install: {
+      requirements: [
+        "macOS or Windows",
+        "Python 3.11 or newer",
+        "Claude Code installed and logged in — Vaani uses your existing subscription, never an API key",
+      ],
+      steps: [
+        { command: "pip install vaani-voice", note: "Install the package from PyPI." },
+        {
+          command: "vaani stt setup",
+          note: "One-time setup. macOS asks for microphone and speech permission; Windows downloads a speech model (~0.5 GB).",
+        },
+        { command: "vaani voice", note: "Run it from any project folder and start talking to Claude Code." },
+        { command: "vaani doctor", note: "Something not working? A one-command self-test of mic, speech and Claude Code." },
+      ],
+    },
+    screenshot: {
+      src: "/projects/vaani-pypi.jpg",
+      alt: "The vaani-voice 0.1.7 package page on PyPI, showing the pip install command and an example Hinglish conversation",
+      width: 1600,
+      height: 980,
+      caption: "vaani-voice on PyPI",
+    },
+    features: [
+      "Speaks the reply sentence by sentence as the agent writes it — about 2 seconds from the end of your question to the first word, instead of waiting for the whole answer",
+      "Talk over a reply to interrupt it: speech stops and Vaani listens, using Apple's echo canceller so no headphones are needed on a Mac",
+      "Hinglish is understood as spoken and replies come back in Hinglish; any Devanagari is routed to a Hindi voice automatically",
+      "Voice commands work in both languages — \"list targets\" / \"targets batao\", \"switch to listurad\" / \"listurad pe jao\", \"stop listening\" / \"band karo\"",
+      "Says what it is doing while it works — \"Ek second…\", \"Main files dekh raha hoon\" — then a short spoken summary of what changed, so a long task never sounds like a hang",
+      "Hands-free mode: no keypress between turns; it detects when you've finished speaking by learning the room's noise level",
+      "Optional wake phrase (\"hey buddy\") so it stays idle until addressed — then keeps listening for the rest of the conversation",
+      "Follow-ups share one conversation, so \"test bhi chala do\" knows which bug was just fixed",
+      "Named targets: switch the project a turn goes to by voice, mid-session",
+      "Permission requests are asked out loud in hands-free mode — answer \"yes\"/\"haan\" or \"no\"/\"nahi\"; it never bypasses Claude Code's approval rules",
+      "Two ways to use it: a terminal loop, or a one-button editor panel for VS Code, Cursor, Windsurf and Antigravity with live captions",
+      "On-device recognition and system voices — audio is never written to disk and transcripts stay out of the log",
+    ],
+    techStack: [
+      "Python 3.11",
+      "Apple Speech framework",
+      "AVFoundation",
+      "macOS say",
+      "faster-whisper",
+      "sounddevice",
+      "NumPy",
+      "Claude Code CLI",
+      "PyYAML",
+      "Rich",
+      "TypeScript (editor extension)",
+      "pytest",
+      "mypy --strict",
+      "Ruff",
+      "PyPI",
+    ],
+    sections: [
+      {
+        heading: "Overview",
+        body: "वाणी (vaani) means speech, voice. Vaani lets you talk to your coding agent instead of typing to it: you say what you want built, in English, Hindi or a mix of both, and you hear what was done. It runs Claude Code on your own machine with your own login — speech recognition and the spoken voice are local, so there is no API key, no speech service and no audio leaving the computer.",
+      },
+      {
+        heading: "What a session sounds like",
+        bullets: [
+          "You: \"login page pe bug hai — galat password dalne par koi error nahi dikhta, fix karo\"",
+          "Vaani: \"Ek second, dekh raha hoon. Main login handler file dekh raha hoon.\"",
+          "Claude: \"Bug mil gaya: catch block mein error state set nahi ho raha tha. Maine LoginForm.tsx mein fix kiya aur ek regression test add kiya.\" — 2.2s to the first spoken word",
+          "You: \"test bhi chala do\" → \"Chala diya — 12 passed, 0 failed.\" No keypress, no re-explaining the bug.",
+        ],
+      },
+      {
+        heading: "Ways to use it",
+        bullets: [
+          "Push-to-talk in the terminal: run vaani voice, press space to start and stop speaking, esc to cancel, q to quit.",
+          "Hands-free: vaani voice --continuous takes turns without a keypress — just speak when it says listening. Say \"stop listening\" to end.",
+          "Wake phrase: vaani voice --continuous --wake stays idle until you say \"Hey buddy, …\" with your request in the same sentence.",
+          "In your editor: install the Vaani extension from the VS Code Marketplace (works in VS Code, Cursor, Windsurf and Antigravity). It installs vaani-voice for you on first run — one button starts and ends the conversation.",
+        ],
+      },
+      {
+        heading: "How it works",
+        bullets: [
+          "One Claude Code process per project stays running in streaming mode, so a turn doesn't pay Claude Code's start-up cost — that, plus speaking each sentence as it arrives, took a two-word question from 12.8s end to end down to about 2s to the first word.",
+          "On macOS, speech recognition runs inside a small helper app that Vaani builds itself, because macOS only grants speech access to a properly declared app bundle.",
+          "Barge-in uses Apple's voice processing — the echo canceller FaceTime uses — to subtract Vaani's own voice, so it can hear you talk over it on laptop speakers.",
+          "Measured, not guessed: an Indian English voice reading romanised Hinglish was understood better than a Hindi voice reading Devanagari, so replies are asked for in Hinglish.",
+        ],
+      },
+      {
+        heading: "Privacy",
+        bullets: [
+          "Audio is streamed straight into the recogniser and never written to disk.",
+          "Transcripts, prompts and replies are kept out of the log file — only timings and counts are recorded.",
+          "Credentials never pass through Vaani; it reuses the Claude Code login already on the machine.",
+          "Both defaults are pinned by tests.",
         ],
       },
     ],

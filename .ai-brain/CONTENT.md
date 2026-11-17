@@ -19,6 +19,12 @@ static page per slug via `generateStaticParams`.
   sections: [ { heading, body?, bullets? } ],
   githubUrl?: "...",             // present → "View on GitHub" button renders
   liveUrl?: "...",               // present → "Visit Live Project" button + Live badge
+  pypiUrl?: "...",               // present → "View on PyPI" button + "On PyPI" badge
+  install?: {                    // present → "Get started" card after Overview
+    requirements?: ["Python 3.11+"],
+    steps: [{ command: "pip install x", note?: "..." }],  // each gets a copy button
+  },
+  screenshot?: { src, alt, width, height, caption? },  // file in public/projects/
   period?: "2026 – Present",
   role?: "Senior AI Backend Developer",
   stats?: [{ label, value }],    // up to 3 number cards on the detail hero
@@ -29,12 +35,16 @@ static page per slug via `generateStaticParams`.
 
 ## Rules that are easy to get wrong
 
-- **The button rule is load-bearing.** `githubUrl` and `liveUrl` are both optional and
-  independently rendered. A project with neither shows no buttons at all — that is
-  correct, never add a placeholder link.
+- **The button rule is load-bearing.** `githubUrl`, `liveUrl` and `pypiUrl` are all
+  optional and independently rendered. A project with none shows no buttons at all — that
+  is correct, never add a placeholder link.
+- **Vaani has no `githubUrl` on purpose.** The owner wants it reachable through PyPI
+  only — no repo link anywhere on its page. Don't "helpfully" add one from the README.
 - **`span` must keep rows full.** The grid is 6 columns. Current layout is
-  `6 | 3+3 | 2+2+2 | 3+3`. If you add a project, re-check the arithmetic or a card will
-  sit alone in a ragged row.
+  `6 | 6 | 3+3 | 3+3 | 3+3 | 3+3` (Listurad, Vaani, then eight half cards). If you add a
+  project, re-check the arithmetic or a card will sit alone in a ragged row.
+- **Section order on the detail page with the new blocks:** first section → Get started
+  (`install`) → screenshot → Features → remaining sections.
 - **Span strings live in `lib/`,** so `tailwind.config.js` includes `./lib/**/*.{ts,tsx}`
   in its `content` globs. Without that, Tailwind purges the `md:col-span-*` classes and
   every card silently collapses to one column.

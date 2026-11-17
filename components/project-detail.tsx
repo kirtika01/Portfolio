@@ -1,17 +1,162 @@
 "use client"
 
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, ArrowUpRight, Check, Github, Linkedin, Radio } from "lucide-react"
+import Image from "next/image"
+import { ArrowLeft, ArrowUpRight, Check, Copy, Github, Linkedin, Package, Radio, Terminal } from "lucide-react"
 import SpotlightCard from "@/components/spotlight-card"
 import Reveal from "@/components/reveal"
 import MagneticButton from "@/components/magnetic-button"
 import { DURATION, EASE, STAGGER, gsap, prefersReducedMotion, registerGsap } from "@/lib/motion"
-import type { Project } from "@/lib/projectsData"
+import type { Project, ProjectInstall, ProjectScreenshot } from "@/lib/projectsData"
+
+/** One command with a copy button. Falls back silently if the clipboard is blocked. */
+function CommandLine({ command }: { command: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(command)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1600)
+    } catch {
+      // Clipboard unavailable (insecure context, permissions) — the text is still selectable.
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2 rounded-xl border border-white/[0.06] bg-black/60 py-1.5 pl-4 pr-1.5">
+      <span className="select-none font-mono text-sm text-[#8a5a34]">$</span>
+      <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-sm text-[#f0e2d0]">
+        {command}
+      </code>
+      <button
+        type="button"
+        onClick={copy}
+        aria-label={copied ? "Copied" : `Copy ${command}`}
+        className="shrink-0 rounded-lg p-2 text-stone-400 transition-colors hover:bg-white/5 hover:text-[#e0c9ad]"
+      >
+        {copied ? <Check className="h-4 w-4 text-[#cba982]" /> : <Copy className="h-4 w-4" />}
+      </button>
+    </div>
+  )
+}
+
+function GetStarted({ install, pypiUrl }: { install: ProjectInstall; pypiUrl?: string }) {
+  return (
+    <SpotlightCard className="p-6 md:p-8">
+      <h2 className="mb-2 flex items-center gap-3 font-display text-2xl font-semibold">
+        <Terminal className="h-5 w-5 text-[#cba982]" />
+        <span className="text-gradient">Get started</span>
+      </h2>
+      <p className="mb-6 text-sm text-stone-400">
+        Install it
+        {pypiUrl && (
+          <>
+            {" "}from{" "}
+            <a
+              href={pypiUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#e0c9ad] underline decoration-[#8a5a34] underline-offset-4 hover:text-white"
+            >
+              PyPI
+            </a>
+          </>
+        )}{" "}
+        and get it running.
+      </p>
+
+      {install.requirements && install.requirements.length > 0 && (
+        <div className="mb-6 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-stone-500">You'll need</p>
+          <ul className="space-y-1.5">
+            {install.requirements.map((r) => (
+              <li key={r} className="flex gap-2.5 text-sm leading-relaxed text-stone-300">
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#cba982]" />
+                <span>{r}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <ol className="space-y-5">
+        {install.steps.map((step, i) => (
+          <li key={step.command} className="flex gap-4">
+            <span className="mt-1.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gradient-to-r from-[#b98a5e]/25 to-[#8a5a34]/25 text-xs font-semibold text-[#f0e2d0] ring-1 ring-white/10">
+              {i + 1}
+            </span>
+            <div className="min-w-0 flex-1">
+              <CommandLine command={step.command} />
+              {step.note && <p className="mt-2 text-sm leading-relaxed text-stone-400">{step.note}</p>}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </SpotlightCard>
+  )
+}
+
+function Screenshot({ shot, href }: { shot: ProjectScreenshot; href?: string }) {
+  const img = (
+    <Image
+      src={shot.src}
+      alt={shot.alt}
+      width={shot.width}
+      height={shot.height}
+      className="h-auto w-full rounded-xl ring-1 ring-white/10 transition-transform duration-500 group-hover/shot:scale-[1.01]"
+    />
+  )
+
+  return (
+    <SpotlightCard className="p-3 md:p-4">
+      <figure>
+        {href ? (
+          <a href={href} target="_blank" rel="noopener noreferrer" className="group/shot block overflow-hidden rounded-xl">
+            {img}
+          </a>
+        ) : (
+          img
+        )}
+        {shot.caption && (
+          <figcaption className="flex items-center justify-between gap-3 px-2 pb-1 pt-3 text-sm text-stone-400">
+            <span>{shot.caption}</span>
+            {href && (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-[#e0c9ad] hover:text-white"
+              >
+                Open
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </a>
+            )}
+          </figcaption>
+        )}
+      </figure>
+    </SpotlightCard>
+  )
+}
 
 export default function ProjectDetail({ project }: { project: Project }) {
-  const { title, tagline, tags, period, role, liveUrl, githubUrl, stats, features, techStack, sections } =
-    project
+  const {
+    title,
+    tagline,
+    tags,
+    period,
+    role,
+    liveUrl,
+    githubUrl,
+    pypiUrl,
+    install,
+    screenshot,
+    stats,
+    features,
+    techStack,
+    sections,
+  } = project
 
   // Hero content fades in on load, matching the home page's entrance.
   const heroRef = useRef<HTMLDivElement>(null)
@@ -100,6 +245,12 @@ export default function ProjectDetail({ project }: { project: Project }) {
                   Live project
                 </span>
               )}
+              {pypiUrl && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cba982]/30 bg-[#cba982]/10 px-3 py-1 text-xs font-medium text-[#f0e2d0]">
+                  <Package className="h-3.5 w-3.5" />
+                  Published on PyPI
+                </span>
+              )}
               {period && (
                 <span className="rounded-full border border-[#b98a5e]/20 bg-[#b98a5e]/10 px-3 py-1 text-xs text-[#e0c9ad]">
                   {period}
@@ -119,10 +270,22 @@ export default function ProjectDetail({ project }: { project: Project }) {
               {tagline}
             </p>
 
-            {/* GitHub button only when a repo link exists; live button only when a
-                deployment link exists. Never an empty or broken button. */}
-            {(githubUrl || liveUrl) && (
+            {/* Each button renders only when its link exists — GitHub, live deployment,
+                PyPI. Never an empty or broken button. */}
+            {(githubUrl || liveUrl || pypiUrl) && (
               <div data-hero-item className="flex flex-wrap gap-3">
+                {pypiUrl && (
+                  <a href={pypiUrl} target="_blank" rel="noopener noreferrer">
+                    <MagneticButton
+                      shimmer
+                      className="rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] px-6 py-3 font-medium text-white shadow-lg shadow-[#b98a5e]/25"
+                    >
+                      <Package className="h-4 w-4" />
+                      View on PyPI
+                      <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    </MagneticButton>
+                  </a>
+                )}
                 {liveUrl && (
                   <a href={liveUrl} target="_blank" rel="noopener noreferrer">
                     <MagneticButton
@@ -189,6 +352,19 @@ export default function ProjectDetail({ project }: { project: Project }) {
                   </SpotlightCard>
                 </Reveal>
               ))}
+
+              {/* How to install and reach the project, then what it looks like. */}
+              {install && (
+                <Reveal delay={0.06}>
+                  <GetStarted install={install} pypiUrl={pypiUrl} />
+                </Reveal>
+              )}
+
+              {screenshot && (
+                <Reveal delay={0.06}>
+                  <Screenshot shot={screenshot} href={pypiUrl ?? liveUrl} />
+                </Reveal>
+              )}
 
               {/* Every feature, listed in full. */}
               <Reveal delay={0.06}>

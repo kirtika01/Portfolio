@@ -50,7 +50,8 @@ Portfolio/
 6. **`pnpm dev` fails** on this repo (ignored build scripts). Use
    `./node_modules/.bin/next dev` or run `pnpm approve-builds` once.
 7. **The GitHub button on a project page only renders if `githubUrl` exists**, and the
-   live button only if `liveUrl` exists. This is deliberate — never show a dead button.
+   live button only if `liveUrl` exists, the PyPI button only if `pypiUrl` exists. This is
+   deliberate — never show a dead button.
 8. **TypeScript and ESLint errors do not fail the build** (`next.config.mjs` ignores
    both). Some dead three.js/tsparticles files have type errors permanently.
 

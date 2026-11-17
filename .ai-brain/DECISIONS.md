@@ -55,3 +55,11 @@ The source material included an internal audit (secrets in git history, missing 
 readiness score). None of it is on the public page. A portfolio is the wrong place to
 publish a live system's weak points. The page carries the architecture and engineering
 decisions instead.
+
+## 2026-11-17 — Vaani links to PyPI only
+
+Vaani (`vaani-voice`) is shown with a PyPI button, an install card and a screenshot of
+its PyPI page, but **no GitHub link and no source code**: the owner asked for visitors to
+reach it through PyPI alone. The PyPI page itself still lists the repo under "Project
+links"; that is PyPI's page, not the portfolio's. `pypiUrl`, `install` and `screenshot`
+were added as generic optional fields so the next published package can reuse them.

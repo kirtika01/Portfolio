@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { ArrowRight, Github, Radio } from "lucide-react"
+import { ArrowRight, Github, Package, Radio } from "lucide-react"
 import SpotlightCard from "@/components/spotlight-card"
 import Reveal from "@/components/reveal"
 import type { Project } from "@/lib/projectsData"
@@ -14,7 +14,7 @@ interface ProjectCardProps {
 
 /** Brief teaser card: title, one-line summary, tags, and a link to the detail page. */
 export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
-  const { slug, title, summary, tags, period, featured, liveUrl, githubUrl, stats } = project
+  const { slug, title, summary, tags, period, featured, liveUrl, githubUrl, pypiUrl, stats } = project
 
   return (
     <Reveal className={project.span} delay={delay}>
@@ -29,6 +29,12 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
                     <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
                   </span>
                   Live
+                </span>
+              )}
+              {pypiUrl && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cba982]/30 bg-[#cba982]/10 px-3 py-1 text-xs font-medium text-[#f0e2d0]">
+                  <Package className="h-3 w-3" />
+                  On PyPI
                 </span>
               )}
               {period && (
@@ -81,6 +87,7 @@ export default function ProjectCard({ project, delay = 0 }: ProjectCardProps) {
                 <span className="flex items-center gap-3 text-stone-600">
                   {githubUrl && <Github className="h-4 w-4" />}
                   {liveUrl && <Radio className="h-4 w-4" />}
+                  {pypiUrl && <Package className="h-4 w-4" />}
                 </span>
               </div>
             </div>
