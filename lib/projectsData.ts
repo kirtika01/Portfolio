@@ -25,12 +25,21 @@
  *              Each step is { command, note? }. The only place commands render.
  *  screenshot  OPTIONAL. One image on the detail page. Put the file in
  *              public/projects/ and give its real pixel width/height.
+ *              For an animated GIF, also give `still`: a static frame of the
+ *              same size, shown instead when the visitor prefers reduced motion.
  *  period     OPTIONAL. Date range chip.
  *  role        OPTIONAL. Your role chip on the detail page.
+ *  location    OPTIONAL. Where the work was based, e.g. "San Francisco · Remote".
  *  stats       OPTIONAL. Up to 3 headline numbers on the detail hero.
- *  featured    OPTIONAL. Renders the card as the large hero card in the grid.
- *  span        OPTIONAL. Tailwind grid span for the card, out of 6 columns.
- *              e.g. "md:col-span-6" (full), "md:col-span-3" (half), "md:col-span-2" (third).
+ *  featured    OPTIONAL. Featured projects are listed first in the grid.
+ *  category    Short label on the card, e.g. "Marketplace · SaaS".
+ *  status      "Live" | "In Progress" | "Research" | "Completed".
+ *  filters     Which home-page filter tabs show it: "AI/ML", "Backend", "SaaS",
+ *              "Automation", "Research". A project can be in several.
+ *  problem     One or two sentences: what problem it addresses.
+ *  solution    One or two sentences: how it solves it.
+ *  needsReview OPTIONAL. Facts still to confirm (e.g. ["tech stack"]). Rendered
+ *              as a dashed "Needs review" chip in development only, never in prod.
  * ============================================================================
  */
 
@@ -56,6 +65,8 @@ export interface ProjectScreenshot {
   width: number
   height: number
   caption?: string
+  /** Static frame (same size) shown instead of an animated `src` under reduced motion. */
+  still?: string
 }
 
 export interface Project {
@@ -74,12 +85,126 @@ export interface Project {
   screenshot?: ProjectScreenshot
   period?: string
   role?: string
+  location?: string
   stats?: { label: string; value: string }[]
   featured?: boolean
-  span?: string
+  /** Short display label shown on the card, e.g. "Marketplace · SaaS". */
+  category: string
+  status: ProjectStatus
+  /** Which filter tabs on the home page this project appears under. */
+  filters: ProjectFilter[]
+  /** One or two sentences: the problem the project addresses. */
+  problem: string
+  /** One or two sentences: how the project solves it. */
+  solution: string
+  /** Details still to be confirmed. Shown as a dashed chip in development only. */
+  needsReview?: string[]
 }
 
+export type ProjectStatus = "Live" | "In Progress" | "Research" | "Completed"
+export type ProjectFilter = "AI/ML" | "Backend" | "SaaS" | "Automation" | "Research"
+export const PROJECT_FILTERS: ProjectFilter[] = ["AI/ML", "Backend", "SaaS", "Automation", "Research"]
+
 export const projects: Project[] = [
+  // ==========================================================================
+  //  PROMPTLIAI — freelance client work. No public repo and no public live
+  //  URL (promptliai.com did not respond on 2026-11-23), so no buttons.
+  //  The client OK'd this page and the product-tour GIF on 2026-11-23.
+  //  Facts come from the owner's LinkedIn and her own commits in promptli-mvp.
+  // ==========================================================================
+  {
+    slug: "promptliai",
+    title: "PromptliAI — Enterprise AI Orchestration & Governance",
+    tagline:
+      "Route each prompt to the right models, compare their answers, grade them, and keep an audit trail a compliance team can trust.",
+    summary:
+      "Client work for a US startup: an AI platform that runs a council of Bedrock models, grades the answers and records a tamper-evident audit trail.",
+    tags: ["AWS Bedrock", "TypeScript", "AWS CDK", "LLM routing", "Governance"],
+    period: "Dec 2025 – Nov 2026",
+    role: "Software Engineer · Freelance",
+    location: "San Francisco, California, United States · Remote",
+    // Product tour GIF from promptli-mvp; the client approved its use (2026-11-23).
+    screenshot: {
+      src: "/projects/promptliai-product-tour.gif",
+      still: "/projects/promptliai-dashboard.jpg",
+      alt: "PromptliAI product tour: starting an AI code-collaboration session, approving an agent's proposed workflow, the data-boundaries settings, the agent audit log, and the governance dashboard with sessions, trust score, cost and compliance.",
+      width: 1901,
+      height: 918,
+      caption: "Product tour: code collaboration, agent approval, data boundaries, audit log and the governance dashboard.",
+    },
+    featured: true,
+    category: "Enterprise AI · Client work",
+    status: "Completed",
+    filters: ["AI/ML", "Backend", "SaaS"],
+    stats: [
+      { value: "40", label: "intent classes" },
+      { value: "9", label: "model families formatted" },
+      { value: "46+", label: "Bedrock models in the gateway" },
+    ],
+    problem:
+      "Enterprises in regulated industries want to use several frontier AI models, but they need to know which model to use, whether an answer can be trusted, what it cost, and proof of who asked what.",
+    solution:
+      "A serverless AWS platform that classifies each prompt's intent, runs a council of Bedrock models in parallel, grades the answers with an LLM judge, enforces budgets and governance rules, and writes every step to a tamper-evident audit ledger.",
+    features: [
+      "Intent classification that routes each prompt to suitable models with cost in mind",
+      "A council of models run in parallel, with an LLM-as-judge grading every answer",
+      "One model gateway in front of 46+ Amazon Bedrock models",
+      "Governance checks before a request is allowed to run",
+      "A tamper-evident, hash-chained audit ledger with regular integrity checks",
+      "Per-user budgets and token-level cost tracking",
+      "Retrieval-augmented generation over ingested company documents",
+      "Governed agents that replay a recorded workflow with scoped credentials",
+      "A Chrome extension that records workflows and suggests agents to build from them",
+      "Cognito sign-in with role-based access control",
+    ],
+    techStack: [
+      "TypeScript",
+      "Node.js",
+      "AWS CDK",
+      "AWS Lambda",
+      "API Gateway",
+      "Amazon Bedrock",
+      "Step Functions",
+      "DynamoDB",
+      "ElastiCache Redis",
+      "S3",
+      "KMS",
+      "CloudWatch",
+      "Cognito",
+      "React",
+      "Vite",
+      "Tailwind CSS",
+      "Chrome Extension (MV3)",
+      "GitLab CI/CD",
+    ],
+    sections: [
+      {
+        heading: "Overview",
+        body: "PromptliAI is an enterprise AI orchestration and governance platform built for a San Francisco startup. It sits between an organisation and frontier AI models: it works out what a prompt is asking for, sends it to a council of models on Amazon Bedrock, grades the answers, and records everything for compliance. I worked on it remotely as a freelance software engineer for a year, alongside the PromptliAI team.",
+      },
+      {
+        heading: "What I built",
+        bullets: [
+          "Intent routing: extended the classifier to a 40-intent taxonomy with a 120-case test set, validated above 90% accuracy at under 0.1 ms per classification.",
+          "Model gateway: model-specific prompt formatting for 9 model families, a prompt-variant generator, and request-size validation.",
+          "Infrastructure as code (AWS CDK): ElastiCache Redis for semantic memory and caching, KMS customer-managed keys, hardened S3 artifact storage, and a central CloudWatch observability stack split into cache, cost, API and grading dashboards with alarms.",
+          "Agents: the agents, agent-runs, integrations and agent-audit APIs on Lambda, plus real-time workflow recording from the Chrome extension.",
+          "Auth: Cognito sign-up, email verification, resend-code and forgot-password flows, with roles derived from Cognito groups.",
+          "Delivery: fixed and hardened the GitLab CI/CD pipeline with SAST and secret detection.",
+        ],
+      },
+      {
+        heading: "Architecture / how it works",
+        bullets: [
+          "A React console and the Chrome extension call a REST API on API Gateway, authorised by Cognito.",
+          "A gateway Lambda applies governance and budget checks before any model is called.",
+          "Step Functions fan a prompt out to several Bedrock models through the model gateway, and a grader Lambda scores the answers.",
+          "Sessions are stored in DynamoDB and streamed to an S3 audit lake and a hash-chained ledger that is checked for tampering.",
+        ],
+      },
+    ],
+  },
+
   // ==========================================================================
   //  LISTURAD — live deployment, no public repo (so: no GitHub button)
   // ==========================================================================
@@ -94,7 +219,13 @@ export const projects: Project[] = [
     period: "2026 – Present",
     role: "Senior AI Backend Developer",
     featured: true,
-    span: "md:col-span-6",
+    category: "Marketplace · SaaS",
+    status: "Live",
+    filters: ["SaaS", "Backend", "AI/ML"],
+    problem:
+      "Sellers need a quick way to list an item and reach buyers on web and mobile, while payments, roles and business rules stay consistent across every client.",
+    solution:
+      "One FastAPI backend on Supabase Postgres serves a Next.js web app, a Flutter app and an admin surface, with AI-drafted listings, automated moderation and translation, realtime chat, and server-authoritative payments.",
     liveUrl: "https://dev.listurad.com",
     features: [
       "AI ad posting — a user describes what they're selling and OpenAI drafts the structured listing: title, category, and description",
@@ -170,7 +301,13 @@ export const projects: Project[] = [
     period: "2026",
     role: "Creator & maintainer",
     featured: true,
-    span: "md:col-span-6",
+    category: "Developer Tools · Voice AI",
+    status: "Live",
+    filters: ["AI/ML", "Automation"],
+    problem:
+      "Working with a coding agent means typing every request and reading every reply. That is slow, and it doesn't suit people who think and speak in Hindi or Hinglish.",
+    solution:
+      "A local voice layer for Claude Code: on-device speech in and out, replies spoken sentence by sentence about 2 seconds after the question, with no API key and no audio leaving the machine.",
     pypiUrl: "https://pypi.org/project/vaani-voice/",
     stats: [
       { label: "First spoken word after a question", value: "~2.2s" },
@@ -276,6 +413,41 @@ export const projects: Project[] = [
   },
 
   // ==========================================================================
+  //  CHECK-IN / CHECK-OUT AGENT — live deployment. Moved here from the old
+  //  "Live AI Projects" block. Tech stack, dates and role are not recorded
+  //  anywhere yet, so they are left empty and flagged for review.
+  // ==========================================================================
+  {
+    slug: "checkin-agent",
+    title: "Check-In / Check-Out Agent",
+    tagline: "An automated attendance system that records entries and exits.",
+    summary:
+      "An automated attendance system that records entries and exits, reduces manual effort, and keeps activity tracking accurate.",
+    tags: ["AI Agent", "Automation"],
+    category: "Workflow Automation",
+    status: "Live",
+    filters: ["Automation"],
+    problem:
+      "Recording entries and exits by hand takes effort and produces inaccurate attendance records.",
+    solution:
+      "An AI-powered automation agent that records check-ins and check-outs automatically, for accurate, efficient activity tracking.",
+    needsReview: ["tech stack", "dates", "role", "feature list"],
+    liveUrl: "https://checkin.oll.co",
+    features: [
+      "Records entries and exits automatically",
+      "Reduces the manual effort of attendance tracking",
+      "Keeps activity records accurate",
+    ],
+    techStack: [],
+    sections: [
+      {
+        heading: "Overview",
+        body: "An automated attendance system that records entries and exits, reduces manual effort, and ensures accurate, efficient activity tracking. One of the AI-powered automation agents designed and deployed for organisations.",
+      },
+    ],
+  },
+
+  // ==========================================================================
   //  BRIEFCASE — public repo, no hosted deployment (so: GitHub button only)
   // ==========================================================================
   {
@@ -286,7 +458,13 @@ export const projects: Project[] = [
     summary:
       "Sends a take-home assignment to every candidate individually — personalised, never a shared BCC, and fully searchable afterwards.",
     tags: ["Node.js", "Express", "Nodemailer", "AI"],
-    span: "md:col-span-3",
+    category: "Hiring Automation",
+    status: "Completed",
+    filters: ["Automation", "Backend"],
+    problem:
+      "Sending a take-home assignment to dozens of candidates by hand is error-prone, a bulk BCC exposes the shortlist, and nobody has a reliable record of who received what.",
+    solution:
+      "A Node.js and Express tool that reads candidate lists in any format, drafts the email with AI, sends each person a personalised copy with the brief attached, and keeps a searchable send history.",
     githubUrl: "https://github.com/kirtika01/Briefcase",
     features: [
       "Paste addresses separated by commas, spaces or new lines",
@@ -354,7 +532,13 @@ export const projects: Project[] = [
     summary:
       "A LangGraph multi-agent workflow that researches a topic with Tavily and drafts a cited answer with Gemini.",
     tags: ["LangGraph", "Gemini", "Python", "Multi-Agent"],
-    span: "md:col-span-3",
+    category: "AI Agents",
+    status: "Completed",
+    filters: ["AI/ML", "Automation"],
+    problem:
+      "Researching a topic means searching many sources, then turning the findings into a clear, cited answer by hand.",
+    solution:
+      "A LangGraph workflow coordinates a research agent (Tavily search, Gemini analysis) and an answer-drafting agent that writes a cited response, with Pydantic-validated state and async execution.",
     githubUrl: "https://github.com/kirtika01/Research_assistant_project",
     features: [
       "Research agent that gathers information using the Tavily search API",
@@ -443,7 +627,13 @@ export const projects: Project[] = [
     summary:
       "A Google ADK agent that answers natural-language questions about HSN codes and their classifications.",
     tags: ["Google ADK", "Gemini", "Python", "Pandas"],
-    span: "md:col-span-3",
+    category: "AI Agents",
+    status: "Completed",
+    filters: ["AI/ML", "Automation"],
+    problem:
+      "Finding the right HSN classification code means searching long code tables by exact number or exact wording.",
+    solution:
+      "A Google ADK agent with a custom lookup tool that answers natural-language questions, matching codes by prefix and descriptions by multi-term search, and returning the top matches with category context.",
     githubUrl: "https://github.com/kirtika01/Google_ADK",
     features: [
       "Find and understand HSN codes through natural language queries",
@@ -553,7 +743,13 @@ export const projects: Project[] = [
       "Compare 2–10 educational YouTube videos on content quality, engagement, and comment sentiment.",
     tags: ["AI", "Python", "NLP", "Data Analysis"],
     period: "January 2025 – February 2025",
-    span: "md:col-span-3",
+    category: "AI Analytics",
+    status: "Completed",
+    filters: ["AI/ML"],
+    problem:
+      "Choosing between several educational videos on the same topic is hard without a consistent way to compare their content, engagement and audience response.",
+    solution:
+      "A Streamlit app that pulls YouTube Data API metrics, uses Gemini to assess subject, difficulty and key concepts, scores comment sentiment, and recommends one of 2–10 videos.",
     githubUrl: "https://github.com/kirtika01/multiple",
     features: [
       "Multiple video comparison (2–10 videos)",
@@ -650,7 +846,14 @@ export const projects: Project[] = [
       "Detects and segments mirrors and reflective surfaces in video using YOLO v8 and v11.",
     tags: ["Computer Vision", "Deep Learning", "YOLO", "Object Detection"],
     period: "Present",
-    span: "md:col-span-3",
+    category: "Computer Vision",
+    status: "In Progress",
+    filters: ["AI/ML", "Research"],
+    problem:
+      "Mirrors and reflective surfaces confuse vision systems, which mistake reflections for real objects.",
+    solution:
+      "Detection and segmentation of reflective surfaces in video with YOLO v8 and v11, using motion cues across frames to separate real objects from their reflections.",
+    needsReview: ["repository or demo link", "results / outcome"],
     features: [
       "Detection and segmentation of reflective surfaces in video",
       "Built on YOLO v8 and YOLO v11 detection models",
@@ -676,7 +879,13 @@ export const projects: Project[] = [
       "Uses Digital Elevation Model data to find where rural hill roads need building or upgrading.",
     tags: ["Machine Learning", "Geospatial Analysis", "Data Science"],
     period: "August 2024 – September 2024",
-    span: "md:col-span-3",
+    category: "Geospatial Research",
+    status: "Completed",
+    filters: ["Research"],
+    problem:
+      "Rural, hilly parts of Durg, Chhattisgarh need better road connectivity, and planners need to know where new roads or upgrades would help most.",
+    solution:
+      "Digital Elevation Model data from Google Earth Engine, clipped to the district and visualised in Python, to identify regions where roads should be built or upgraded.",
     githubUrl: "https://github.com/kirtika01/Hack_a_sol_",
     features: [
       "Download and analyze DEM data for the Durg district using Google Earth Engine",
@@ -718,7 +927,13 @@ export const projects: Project[] = [
       "Predicts gold prices by pairing multiple ML models with NLP sentiment from news articles.",
     tags: ["Deep Learning", "NLP", "Time Series", "LSTM", "GRU"],
     period: "April 2024 – June 2024",
-    span: "md:col-span-3",
+    category: "Published Research",
+    status: "Research",
+    filters: ["AI/ML", "Research"],
+    problem:
+      "Gold prices react to market news as well as historical trends, so a model trained only on price history misses part of the signal.",
+    solution:
+      "Several ML and deep learning models (Linear Regression, LSTM, Bi-LSTM, RNN, CNN, GRU) combined with NLP sentiment from news articles. The work is published at an IEEE conference.",
     githubUrl: "https://github.com/kirtika01/Gold_price",
     features: [
       "Historical price analysis using ML models: Linear Regression, Bi-LSTM, LSTM, RNN, CNN, GRU",
@@ -759,7 +974,13 @@ export const projects: Project[] = [
       "A CNN image classifier that diagnoses rice crop diseases so farmers can act early.",
     tags: ["CNN", "Image Classification", "Agriculture Tech", "Deep Learning"],
     period: "June 2023 – October 2023",
-    span: "md:col-span-3",
+    category: "Academic Project",
+    status: "Completed",
+    filters: ["AI/ML", "Research"],
+    problem:
+      "Rice crop diseases need to be caught early, and diagnosing them by eye is slow and inconsistent.",
+    solution:
+      "A TensorFlow CNN that classifies photos of rice plants into disease categories, behind an interface for uploading an image and getting a diagnosis.",
     githubUrl: "https://github.com/kirtika01/rice-disease-identification",
     features: [
       "Deep Learning Model — utilizes Convolutional Neural Networks (CNN) implemented in TensorFlow to analyze images and classify rice plants into different disease categories",

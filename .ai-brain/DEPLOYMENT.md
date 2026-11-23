@@ -19,8 +19,10 @@ share `.next`. See [GOTCHAS.md](GOTCHAS.md).
 
 ## Build characteristics
 
-- 11 static pages: home, `/thankyou`, `/_not-found`, and 9 prerendered project pages via
-  `generateStaticParams`.
+- Static pages: home, `/thankyou`, `/_not-found`, `/icon.svg`, `/opengraph-image`,
+  `/twitter-image`, sitemap, robots, and one prerendered page per project
+  via `generateStaticParams`.
+- One serverless function: `/api/contact` (the contact form).
 - `next.config.mjs` sets `ignoreBuildErrors` and `ignoreDuringBuilds` — **TypeScript and
   ESLint errors will not fail the build.** Run `tsc --noEmit` yourself.
 - `images.unoptimized: true`, so no image optimisation service is needed.
@@ -30,9 +32,9 @@ share `.next`. See [GOTCHAS.md](GOTCHAS.md).
 Registrar **Hostinger**, host **Vercel**. Status as of 2026-08-20: metadata is committed;
 DNS was still to be configured.
 
-**In code** (done): `app/layout.tsx` sets `metadataBase`, canonical and OG/Twitter tags;
-`app/sitemap.ts` and `app/robots.ts` hardcode `https://kirtikadev.in`. **If the domain ever
-changes, those three files are the places to edit.**
+**In code** (done): `SITE_URL` in `lib/site.ts` is the one place the domain lives.
+`app/layout.tsx` (metadataBase, canonical, OG/Twitter, JSON-LD), `app/sitemap.ts` and
+`app/robots.ts` all read it.
 
 **In the dashboards** (manual):
 
@@ -53,8 +55,60 @@ domain rather than serving both.
 
 ## The contact form
 
-No backend. `components/contact-section.tsx` posts to
-`https://formsubmit.co/gkirtika01@gmail.com` with hidden config fields, and `_next`
-redirects to `/thankyou`. **That redirect URL is built from `window.location.origin` at
-runtime** — it used to be hardcoded to `localhost:3000`, which would have sent real
-visitors to their own machine. Keep it origin-derived.
+**Our own API route sends it through [Resend](https://resend.com).** It replaced
+FormSubmit on 2026-11-23, which was slow and whose emails landed in spam.
+
+- `components/contact-section.tsx` validates, then `fetch`es JSON to `/api/contact`
+  (`CONTACT_ENDPOINT` in `lib/site.ts`). It shows "Enquiry sent" only when the reply is
+  `{ ok: true }`. Server field errors land on their fields; any other failure shows the
+  message and a mailto fallback, and the visitor's input is kept.
+- `app/api/contact/route.ts` re-validates with the same rules (`lib/contact.ts`, shared
+  by both sides; also caps field lengths), then POSTs to Resend's REST API (no SDK
+  dependency) with an 8 s timeout. The email goes to the owner with `reply_to` set to
+  the visitor, so pressing Reply answers them.
+- **Spam protection:** a hidden `_honey` field and a 2.5 s minimum fill time, checked in
+  the browser and again on the server (the client sends `elapsedMs`). A tripped trap
+  gets `{ ok: true }` and nothing is sent. There is also a best-effort rate limit of
+  5 enquiries per IP per 10 minutes, held in memory per server instance.
+- **No visitor auto-reply, on purpose.** Mailing an address typed into a public form lets
+  anyone use the site to send mail to strangers, which hurts the domain's reputation.
+- **No-JS fallback:** the form's `action` is `/api/contact`. A native form post is
+  redirected (303) to `/thankyou` on success, or gets a small HTML error page.
+- Errors from Resend are logged server-side (`[contact] …` in Vercel's function logs)
+  and never shown to visitors.
+
+### Environment variables
+
+Listed in `.env.example`. Put them in `.env.local` locally (git-ignored) and in Vercel →
+Settings → Environment Variables for Production and Preview, then redeploy. **Never commit
+a key.**
+
+| Var | |
+|---|---|
+| `RESEND_API_KEY` | Required. Without it the route answers 503 "The contact form isn't set up yet." |
+| `CONTACT_FROM_EMAIL` | Sender on the verified domain, e.g. `Portfolio Enquiries <enquiries@kirtikadev.in>`. Unset = `onboarding@resend.dev`, which Resend only delivers to the email that owns the Resend account. |
+| `CONTACT_TO_EMAIL` | Optional. Defaults to `LINKS.email`. |
+
+### One-time setup (manual, owner)
+
+1. Sign up at resend.com **with gkirtika01@gmail.com**, so the default sender works for
+   testing before DNS is done.
+2. API Keys → create a key with sending access → `.env.local` and Vercel.
+3. Domains → add `kirtikadev.in`. In Hostinger → DNS, add **exactly** the records Resend
+   shows (a DKIM `TXT` at `resend._domainkey`, plus the `MX` and SPF `TXT` on its `send`
+   subdomain). They don't clash with the Vercel `A`/`CNAME` records. Also add a DMARC
+   record if there isn't one: `TXT` `_dmarc` → `v=DMARC1; p=none;`.
+4. Once Resend shows the domain as *Verified*, set `CONTACT_FROM_EMAIL` and redeploy. The
+   address doesn't need a mailbox.
+5. In Gmail, if the first enquiry is still filtered, mark it *Not spam* and add a filter
+   for `from:enquiries@kirtikadev.in` → *Never send it to Spam*.
+
+Test: submit the form on the site. Success = the green "Enquiry sent" state and the email
+in the inbox within seconds. Failures show up in Vercel → Logs.
+
+## Scheduling link
+
+`SCHEDULING_URL` in `lib/site.ts` is **empty on purpose**. The previous Calendly link
+belonged to the template's original author. When it is empty, the "Prefer a Quick
+Conversation?" card offers WhatsApp and LinkedIn. Put a real Calendly or Cal.com URL
+there and a "Book a Call" button appears.

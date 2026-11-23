@@ -40,7 +40,7 @@ export default function HeroBackground() {
       </motion.div>
       <motion.div className="absolute bottom-1/4 left-1/2" style={{ x: blob3X, y: blob3Y }}>
         <div
-          className="h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-cyan-500/15 blur-[120px] animate-aurora"
+          className="h-[24rem] w-[24rem] -translate-x-1/2 rounded-full bg-[#6b4527]/25 blur-[120px] animate-aurora"
           style={{ animationDelay: "-12s" }}
         />
       </motion.div>

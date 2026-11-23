@@ -54,6 +54,8 @@ the animated path, temporarily stub `prefersReducedMotion()` to return `false`.
 
 ## 7. Dead code with permanent type errors
 
+(See [COMPONENTS.md](COMPONENTS.md) for the full dead list after the redesign.)
+
 `three-scene.tsx`, `particles-animation.tsx`, `ParticleAnimation.tsx`,
 `ParticleBackground.tsx`, `AnimatedBoxes3D.tsx` and `hooks/useThree.ts` are **not rendered
 anywhere** (`header-particles.tsx`, their only entry point, is unused). They carry
@@ -69,3 +71,39 @@ has nothing to do with the package you installed.
 ## 9. Reveal hides content by default
 
 See [MOTION.md](MOTION.md). A broken reveal is a *blank* section, not an unanimated one.
+
+## 10. Satori (`next/og`) rejects a colour in the `background` shorthand
+
+`background: "#000"` alongside a gradient makes `/opengraph-image` return a 500 with
+`Invalid background image: "#000"`. Use `backgroundColor` and `backgroundImage` as
+separate properties.
+
+## 11. CSS grid items overflow narrow screens
+
+Grid items default to `min-width: auto`, so a long unbreakable line inside them (like the
+hero's credibility line) stretches the column past the viewport. The root
+`overflow-x-clip` hides the scrollbar, so the only symptom is clipped text at 320px.
+**Fix:** `grid-cols-1` on the base breakpoint and `min-w-0` on the item.
+
+## 12. `cn()` (tailwind-merge) can silently drop a background colour
+
+Arbitrary `bg-[…]` classes look like colours to tailwind-merge, so combining them with
+`bg-white/[0.04]` dropped the colour. That left the native `<select>` grey under the dark
+color-scheme. Also, Tailwind never generated the inline-SVG `bg-[url(...)]` class. The
+select chevron is now a positioned `<ChevronDown>` icon. Label arbitrary values
+(`bg-[position:…]`, `bg-[length:…]`) whenever you use them with `cn()`.
+
+## 13. Hero items are hidden by CSS until GSAP runs
+
+`.js [data-hero-item]{opacity:0}` in `globals.css`. If the hero ever renders empty, the
+entrance tween didn't run. Check `onIntroDone` and the console before anything else.
+
+## 14. There is no ESLint config
+
+`next lint` launches an interactive setup prompt instead of linting. Adding a config is
+a separate decision (it pulls in dependencies), so it hasn't been done.
+
+## 15. Dev-only console noise under reduced motion
+
+framer-motion logs "You have Reduced Motion enabled on your device" in development when
+reduced motion is on, which includes every headless Chrome run. It is not a site error.

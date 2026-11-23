@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next"
 import { projects } from "@/lib/projectsData"
-
-const SITE_URL = "https://kirtikadev.in"
+import { SITE_URL } from "@/lib/site"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

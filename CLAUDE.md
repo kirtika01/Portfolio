@@ -7,10 +7,10 @@ repo and links to the rest of the knowledge base:
 
 | Doc | Covers |
 |---|---|
-| `.ai-brain/CONTENT.md` | Adding/editing projects (all content is in `lib/projectsData.ts`) |
+| `.ai-brain/CONTENT.md` | Editing content: projects, `lib/content.ts`, `lib/site.ts` |
 | `.ai-brain/THEME.md` | The colour system and how to retheme |
 | `.ai-brain/MOTION.md` | GSAP / Lenis / Reveal and the reduced-motion gate |
-| `.ai-brain/DEPLOYMENT.md` | Vercel, the kirtikadev.in domain, the contact form |
+| `.ai-brain/DEPLOYMENT.md` | Vercel, the kirtikadev.in domain, the Resend contact form + env vars, scheduling link |
 | `.ai-brain/DECISIONS.md` | Why things are built the way they are |
 | `.ai-brain/GOTCHAS.md` | Traps that have already cost time |
 | `.ai-brain/COMPONENTS.md` | What each component does |
@@ -20,8 +20,9 @@ repo and links to the rest of the knowledge base:
 - **Run it:** `./node_modules/.bin/next dev` — `pnpm dev` fails (ignored build scripts).
 - **Never** run `next build` while the dev server is running; they share `.next` and it
   breaks the dev server.
-- **All project content** lives in `lib/projectsData.ts`. One object per project.
+- **Content is data:** projects in `lib/projectsData.ts`, other sections in
+  `lib/content.ts`, links/contact/SEO strings in `lib/site.ts`. Never invent content.
 - **Reveal renders children at `opacity: 0`** until GSAP reveals them — a broken reveal
   looks like a blank page.
-- Type errors do **not** fail the build; run `tsc --noEmit` deliberately.
+- Type errors do **not** fail the build; run `tsc --noEmit` deliberately. No ESLint config exists.
 - Keep the `.ai-brain/` docs current when you change how something works.

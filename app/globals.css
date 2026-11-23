@@ -64,6 +64,79 @@
     background: rgba(185, 138, 94, 0.35);
     color: #fff;
   }
+
+  /* One visible focus ring for every interactive element (keyboard only). */
+  :focus-visible {
+    outline: 2px solid #cba982;
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  /* Sections receive programmatic focus after an in-page jump; no ring there. */
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+}
+
+/* Lenis' recommended rules: it owns smooth scrolling while it is active. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+/* ---------------------------------------------------------------------------
+   Intro overlay + hero entrance (see components/intro-screen.tsx).
+   An inline script in app/layout.tsx adds `js` to <html> and sets
+   data-intro="played" when the intro should be skipped.
+   --------------------------------------------------------------------------- */
+html[data-intro="played"] #intro-screen {
+  display: none;
+}
+/* Fail-safe: if the page's JavaScript never runs, the overlay still leaves. */
+#intro-screen {
+  animation: intro-failsafe 0.4s ease 4s forwards;
+}
+@keyframes intro-failsafe {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+/* Hero items wait for their GSAP entrance — but only when JS is running. */
+.js [data-hero-item] {
+  opacity: 0;
+}
+
+@layer components {
+  /* Primary action: gold with dark text (6.3:1+ contrast on every stop). */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full font-semibold transition-[box-shadow,filter] duration-300;
+    color: #140d07;
+    background-image: linear-gradient(135deg, #ecdcc6 0%, #cba982 45%, #b98a5e 100%);
+    box-shadow:
+      0 10px 30px -12px rgba(185, 138, 94, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  .btn-primary:hover {
+    filter: brightness(1.06);
+    box-shadow:
+      0 14px 38px -12px rgba(203, 169, 130, 0.75),
+      inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  }
+  /* Secondary action: outlined. */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-[#b98a5e]/50 bg-white/[0.04] font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-[#cba982] hover:bg-[#b98a5e]/10;
+  }
+  /* Small rounded tag used for tech stacks and skills. */
+  .chip {
+    @apply inline-flex items-center rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 text-xs text-stone-300;
+  }
+  /* Card surface shared by most home-page sections. */
+  .surface {
+    @apply rounded-2xl border border-white/[0.07] bg-white/[0.03] backdrop-blur-sm;
+  }
 }
 
 @layer utilities {
@@ -143,6 +216,21 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  /* No flow animation on the hero diagram — show it static. */
+  .flow-dash {
+    animation: none !important;
+  }
+}
+
+/* Hero diagram: data "flowing" along the connectors. */
+.flow-dash {
+  stroke-dasharray: 4 14;
+  animation: flow-dash 1.6s linear infinite;
+}
+@keyframes flow-dash {
+  to {
+    stroke-dashoffset: -36;
   }
 }
 
@@ -224,4 +312,13 @@
   text-shadow: -2px 0 #8a5a34;
   clip: rect(85px, 550px, 140px, 0);
   animation: glitch-anim 2s infinite linear alternate-reverse;
+}
+
+@keyframes intro-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
 }

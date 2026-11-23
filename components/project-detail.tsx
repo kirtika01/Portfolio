@@ -3,12 +3,13 @@
 import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ArrowLeft, ArrowUpRight, Check, Copy, Github, Linkedin, Package, Radio, Terminal } from "lucide-react"
+import { ArrowLeft, ArrowUpRight, Check, Copy, Github, Linkedin, MapPin, Package, Radio, Terminal } from "lucide-react"
 import SpotlightCard from "@/components/spotlight-card"
 import Reveal from "@/components/reveal"
-import MagneticButton from "@/components/magnetic-button"
+import ProjectStatusBadge, { NeedsReview } from "@/components/project-status"
 import { DURATION, EASE, STAGGER, gsap, prefersReducedMotion, registerGsap } from "@/lib/motion"
 import type { Project, ProjectInstall, ProjectScreenshot } from "@/lib/projectsData"
+import { LINKS } from "@/lib/site"
 
 /** One command with a copy button. Falls back silently if the clipboard is blocked. */
 function CommandLine({ command }: { command: string }) {
@@ -69,7 +70,7 @@ function GetStarted({ install, pypiUrl }: { install: ProjectInstall; pypiUrl?: s
 
       {install.requirements && install.requirements.length > 0 && (
         <div className="mb-6 rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-stone-500">You'll need</p>
+          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-stone-400">You'll need</p>
           <ul className="space-y-1.5">
             {install.requirements.map((r) => (
               <li key={r} className="flex gap-2.5 text-sm leading-relaxed text-stone-300">
@@ -99,14 +100,18 @@ function GetStarted({ install, pypiUrl }: { install: ProjectInstall; pypiUrl?: s
 }
 
 function Screenshot({ shot, href }: { shot: ProjectScreenshot; href?: string }) {
-  const img = (
-    <Image
-      src={shot.src}
-      alt={shot.alt}
-      width={shot.width}
-      height={shot.height}
-      className="h-auto w-full rounded-xl ring-1 ring-white/10 transition-transform duration-500 group-hover/shot:scale-[1.01]"
-    />
+  const cls =
+    "h-auto w-full rounded-xl ring-1 ring-white/10 transition-transform duration-500 group-hover/shot:scale-[1.01]"
+  // An animated screenshot swaps to its still frame for reduced-motion visitors.
+  // <picture> does that before any frame loads; next/image can't take a <source>.
+  const img = shot.still ? (
+    <picture>
+      <source media="(prefers-reduced-motion: reduce)" srcSet={shot.still} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} loading="lazy" decoding="async" className={cls} />
+    </picture>
+  ) : (
+    <Image src={shot.src} alt={shot.alt} width={shot.width} height={shot.height} className={cls} />
   )
 
   return (
@@ -147,6 +152,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
     tags,
     period,
     role,
+    location,
     liveUrl,
     githubUrl,
     pypiUrl,
@@ -156,6 +162,11 @@ export default function ProjectDetail({ project }: { project: Project }) {
     features,
     techStack,
     sections,
+    category,
+    status,
+    problem,
+    solution,
+    needsReview,
   } = project
 
   // Hero content fades in on load, matching the home page's entrance.
@@ -189,37 +200,39 @@ export default function ProjectDetail({ project }: { project: Project }) {
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/[0.06] bg-black/70 backdrop-blur-md">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <Link href="/" className="font-display text-xl font-bold text-white">
-            Kirtika<span className="text-[#8a5a34]">.</span>
+            Kirtika<span className="text-[#b98a5e]">.</span>
+            <span className="sr-only"> (home)</span>
           </Link>
-          <div className="flex items-center gap-4">
-            <Link href="/#work" className="text-sm text-stone-400 transition-colors hover:text-[#e0c9ad]">
+          <nav aria-label="Main" className="flex items-center gap-4">
+            <Link href="/#work" className="text-sm text-stone-300 transition-colors hover:text-[#e0c9ad]">
               Projects
             </Link>
-            <Link href="/#contact" className="text-sm text-stone-400 transition-colors hover:text-[#e0c9ad]">
+            <Link href="/#contact" className="text-sm text-stone-300 transition-colors hover:text-[#e0c9ad]">
               Contact
             </Link>
             <a
-              href="https://github.com/kirtika01"
+              href={LINKS.github}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="GitHub"
+              aria-label="GitHub (opens in a new tab)"
               className="text-stone-400 transition-colors hover:text-white"
             >
-              <Github className="h-4 w-4" />
+              <Github aria-hidden="true" className="h-4 w-4" />
             </a>
             <a
-              href="https://www.linkedin.com/in/g-kirtika-426687254/"
+              href={LINKS.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="LinkedIn"
+              aria-label="LinkedIn (opens in a new tab)"
               className="text-stone-400 transition-colors hover:text-white"
             >
-              <Linkedin className="h-4 w-4" />
+              <Linkedin aria-hidden="true" className="h-4 w-4" />
             </a>
-          </div>
+          </nav>
         </div>
       </header>
 
+      <main id="main">
       {/* Hero */}
       <section className="relative overflow-hidden pb-12 pt-28 md:pt-32">
         <div className="pointer-events-none absolute inset-0 select-none opacity-40 [background:radial-gradient(circle_at_25%_15%,rgba(185,138,94,0.18),transparent_60%),radial-gradient(circle_at_75%_10%,rgba(138,90,52,0.14),transparent_55%)]" />
@@ -230,24 +243,19 @@ export default function ProjectDetail({ project }: { project: Project }) {
             data-hero-item
             className="mb-8 inline-flex items-center gap-2 text-sm text-stone-400 transition-colors hover:text-[#e0c9ad]"
           >
-            <ArrowLeft className="h-4 w-4" />
+            <ArrowLeft aria-hidden="true" className="h-4 w-4" />
             Back to Projects
           </Link>
 
           <div className="max-w-4xl">
             <div data-hero-item className="mb-5 flex flex-wrap items-center gap-2">
-              {liveUrl && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-green-500/30 bg-green-500/10 px-3 py-1 text-xs font-medium text-green-300">
-                  <span className="relative flex h-1.5 w-1.5">
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75" />
-                    <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-green-400" />
-                  </span>
-                  Live project
-                </span>
-              )}
+              <ProjectStatusBadge status={status} />
+              <span className="rounded-full border border-[#b98a5e]/30 bg-[#b98a5e]/10 px-3 py-1 text-xs font-medium uppercase tracking-wider text-[#e0c9ad]">
+                {category}
+              </span>
               {pypiUrl && (
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-[#cba982]/30 bg-[#cba982]/10 px-3 py-1 text-xs font-medium text-[#f0e2d0]">
-                  <Package className="h-3.5 w-3.5" />
+                  <Package aria-hidden="true" className="h-3.5 w-3.5" />
                   Published on PyPI
                 </span>
               )}
@@ -259,6 +267,13 @@ export default function ProjectDetail({ project }: { project: Project }) {
               {role && (
                 <span className="rounded-full border border-white/[0.06] bg-white/5 px-3 py-1 text-xs text-stone-300">
                   {role}
+                </span>
+              )}
+              {location && (
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-white/5 px-3 py-1 text-xs text-stone-300">
+                  <MapPin aria-hidden="true" className="h-3.5 w-3.5 text-[#cba982]" />
+                  <span className="sr-only">Location: </span>
+                  {location}
                 </span>
               )}
             </div>
@@ -275,35 +290,26 @@ export default function ProjectDetail({ project }: { project: Project }) {
             {(githubUrl || liveUrl || pypiUrl) && (
               <div data-hero-item className="flex flex-wrap gap-3">
                 {pypiUrl && (
-                  <a href={pypiUrl} target="_blank" rel="noopener noreferrer">
-                    <MagneticButton
-                      shimmer
-                      className="rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] px-6 py-3 font-medium text-white shadow-lg shadow-[#b98a5e]/25"
-                    >
-                      <Package className="h-4 w-4" />
-                      View on PyPI
-                      <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </MagneticButton>
+                  <a href={pypiUrl} target="_blank" rel="noopener noreferrer" className="btn-primary group px-6 py-3 text-base">
+                    <Package aria-hidden="true" className="h-4 w-4" />
+                    View on PyPI
+                    <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <span className="sr-only">(opens in a new tab)</span>
                   </a>
                 )}
                 {liveUrl && (
-                  <a href={liveUrl} target="_blank" rel="noopener noreferrer">
-                    <MagneticButton
-                      shimmer
-                      className="rounded-full bg-gradient-to-r from-[#b98a5e] to-[#8a5a34] px-6 py-3 font-medium text-white shadow-lg shadow-[#b98a5e]/25"
-                    >
-                      <Radio className="h-4 w-4" />
-                      Visit Live Project
-                      <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                    </MagneticButton>
+                  <a href={liveUrl} target="_blank" rel="noopener noreferrer" className={pypiUrl ? "btn-secondary group px-6 py-3 text-base" : "btn-primary group px-6 py-3 text-base"}>
+                    <Radio aria-hidden="true" className="h-4 w-4" />
+                    Visit Live Project
+                    <ArrowUpRight aria-hidden="true" className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    <span className="sr-only">(opens in a new tab)</span>
                   </a>
                 )}
                 {githubUrl && (
-                  <a href={githubUrl} target="_blank" rel="noopener noreferrer">
-                    <MagneticButton className="rounded-full border border-[#b98a5e]/60 bg-white/5 px-6 py-3 font-medium text-white backdrop-blur-sm transition-colors duration-300 hover:border-[#cba982] hover:bg-[#b98a5e]/10">
-                      <Github className="h-4 w-4" />
-                      View on GitHub
-                    </MagneticButton>
+                  <a href={githubUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary px-6 py-3 text-base">
+                    <Github aria-hidden="true" className="h-4 w-4" />
+                    View on GitHub
+                    <span className="sr-only">(opens in a new tab)</span>
                   </a>
                 )}
               </div>
@@ -330,6 +336,22 @@ export default function ProjectDetail({ project }: { project: Project }) {
         <div className="container relative z-10 mx-auto px-4">
           <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
             <div className="space-y-6">
+              <Reveal>
+                <SpotlightCard className="p-6 md:p-8">
+                  <dl className="grid gap-6 md:grid-cols-2">
+                    <div>
+                      <dt className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-[#cba982]">The problem</dt>
+                      <dd className="leading-relaxed text-stone-300">{problem}</dd>
+                    </div>
+                    <div>
+                      <dt className="mb-2 text-xs font-medium uppercase tracking-[0.2em] text-[#cba982]">The solution</dt>
+                      <dd className="leading-relaxed text-stone-300">{solution}</dd>
+                    </div>
+                  </dl>
+                  <NeedsReview items={needsReview} className="mt-6" />
+                </SpotlightCard>
+              </Reveal>
+
               {/* Overview first, then the full feature list, then the rest — so a
                   trailing section like Licence stays at the end of the page. */}
               {sections.slice(0, 1).map((section, i) => (
@@ -367,6 +389,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
               )}
 
               {/* Every feature, listed in full. */}
+              {features.length > 0 && (
               <Reveal delay={0.06}>
                 <SpotlightCard className="p-6 md:p-8">
                   <h2 className="mb-5 font-display text-2xl font-semibold">
@@ -375,13 +398,14 @@ export default function ProjectDetail({ project }: { project: Project }) {
                   <ul className="space-y-3">
                     {features.map((feature) => (
                       <li key={feature} className="flex gap-3 leading-relaxed text-stone-300">
-                        <Check className="mt-1 h-4 w-4 shrink-0 text-[#cba982]" />
+                        <Check aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-[#cba982]" />
                         <span>{feature}</span>
                       </li>
                     ))}
                   </ul>
                 </SpotlightCard>
               </Reveal>
+              )}
 
               {sections.slice(1).map((section, i) => (
                 <Reveal key={section.heading} delay={i * 0.06}>
@@ -406,6 +430,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
             </div>
 
             <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+              {techStack.length > 0 && (
               <Reveal delay={0.1}>
                 <SpotlightCard className="p-6">
                   <h2 className="mb-5 font-display text-xl font-semibold">
@@ -423,6 +448,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
                   </div>
                 </SpotlightCard>
               </Reveal>
+              )}
 
               <Reveal delay={0.15}>
                 <SpotlightCard className="p-6">
@@ -439,12 +465,10 @@ export default function ProjectDetail({ project }: { project: Project }) {
                       </span>
                     ))}
                   </div>
-                  <Link
-                    href="/#contact"
-                    className="inline-flex items-center gap-2 rounded-full border border-[#8a5a34]/50 bg-[#8a5a34]/10 px-5 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:bg-[#8a5a34]/20"
-                  >
-                    Get in touch
-                    <ArrowUpRight className="h-4 w-4" />
+                  <p className="mb-4 text-sm leading-relaxed text-stone-300">Building something similar?</p>
+                  <Link href="/#contact" className="btn-primary px-5 py-2.5 text-sm">
+                    Let&apos;s Discuss Your Project
+                    <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
                   </Link>
                 </SpotlightCard>
               </Reveal>
@@ -462,6 +486,7 @@ export default function ProjectDetail({ project }: { project: Project }) {
           </div>
         </div>
       </section>
+      </main>
     </div>
   )
 }

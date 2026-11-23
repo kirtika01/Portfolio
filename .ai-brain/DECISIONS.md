@@ -2,6 +2,28 @@
 
 Newest first. Each entry records the choice, the reason, and what was rejected.
 
+## 2026-11-23 — Client-acquisition redesign
+
+The site was repositioned from a student portfolio to one that wins freelance and
+contract work: AI products, backends, SaaS/MVPs and automation for international clients.
+
+- **Content moved into data** (`lib/content.ts`, `lib/site.ts`) so the owner can edit
+  text without touching JSX.
+- **Nothing was invented.** Where the brief conflicted with the existing site, the
+  existing data was kept and the conflict was reported. Examples: Clone Futura is "AI
+  Agent Developer", the project is "HSN", not "HSM", and it is "Road Connectivity", not
+  "Flood Detection". Facts that are unknown go in `needsReview` instead of being guessed.
+- **Skill percentages removed** at the brief's request, and Docker left out.
+- **The intro became an overlay** over server-rendered content. The old loader kept the
+  page out of the DOM, so crawlers and link previews saw nothing.
+- **The form uses AJAX** so it can show honest success and error states inline. The
+  native POST remains as the no-JS fallback.
+- **The Calendly link was removed.** It belonged to the template's original author.
+  `SCHEDULING_URL` is empty until the owner has a link of their own.
+- **No new dependencies.** The OG image uses the built-in `next/og`.
+- **Dead components were left on disk** (listed in [COMPONENTS.md](COMPONENTS.md)) so
+  the redesign diff stays reviewable.
+
 ## 2026-08-20 — Coffee on black, not purple
 
 Purple → pink is the default palette of nearly every AI/backend portfolio, so it made the

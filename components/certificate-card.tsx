@@ -1,54 +1,52 @@
-"use client"
-
-import { Award, ExternalLink } from "lucide-react"
-import SpotlightCard from "@/components/spotlight-card"
-import Reveal from "@/components/reveal"
+import { Award, ExternalLink, Trophy, Users } from "lucide-react"
+import type { AchievementKind } from "@/lib/content"
 
 interface CertificateCardProps {
   title: string
   issuer: string
-  date: string
-  image?: string
+  year: string
+  kind: AchievementKind
+  /** Certificate URL. The link renders only when set. */
   link?: string
 }
 
-const issuerStyles: Record<string, { ring: string; icon: string }> = {
-  "Google Cloud": { ring: "from-blue-500/30 to-green-500/30", icon: "text-blue-400" },
-  IEEE: { ring: "from-blue-500/30 to-blue-700/30", icon: "text-blue-400" },
-  NPTEL: { ring: "from-orange-500/30 to-red-500/30", icon: "text-orange-400" },
+const KIND: Record<AchievementKind, { icon: typeof Award; label: string }> = {
+  award: { icon: Trophy, label: "Award" },
+  certification: { icon: Award, label: "Certification" },
+  conference: { icon: Users, label: "Conference" },
 }
 
-export default function CertificateCard({ title, issuer, date, link }: CertificateCardProps) {
-  const style = issuerStyles[issuer] ?? { ring: "from-[#b98a5e]/30 to-[#8a5a34]/30", icon: "text-[#cba982]" }
-
+/** Compact achievement / certification row. */
+export default function CertificateCard({ title, issuer, year, kind, link }: CertificateCardProps) {
+  const { icon: Icon, label } = KIND[kind]
   return (
-    <Reveal className="h-full">
-      <SpotlightCard className="h-full" cursorLabel={link ? "View" : undefined}>
-      <div className="flex h-full flex-col items-center gap-4 p-6 text-center md:flex-row md:items-start md:text-left">
-        {/* Badge */}
-        <div className="relative flex-shrink-0">
-          <div className={`flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${style.ring} ring-1 ring-white/10`}>
-            <Award className={`h-8 w-8 ${style.icon}`} />
-          </div>
-        </div>
-        <div className="flex-1">
-          <h3 className="mb-1 font-display text-lg font-bold text-white">{title}</h3>
-          <p className="text-sm text-[#cba982]">{issuer}</p>
-          <p className="mb-2 text-xs text-stone-500">{date}</p>
-          {link && (
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm text-stone-300 transition-colors hover:text-white"
-            >
-              <span>View Certificate</span>
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          )}
-        </div>
+    <div className="surface flex h-full items-start gap-4 p-5 transition-colors duration-300 hover:border-[#b98a5e]/35">
+      <span className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-[#b98a5e]/10 text-[#cba982] ring-1 ring-[#b98a5e]/25">
+        <Icon aria-hidden="true" className="h-5 w-5" />
+        <span className="sr-only">{label}</span>
+      </span>
+      <div className="min-w-0 flex-1">
+        <h4 className="font-display font-semibold leading-snug text-white">{title}</h4>
+        <p className="mt-1 text-sm text-stone-300">
+          {issuer}
+          <span aria-hidden="true" className="mx-1.5 text-stone-500">
+            ·
+          </span>
+          {year}
+        </p>
+        {link && (
+          <a
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-flex items-center gap-1 text-sm text-[#cba982] transition-colors hover:text-[#e0c9ad]"
+          >
+            View certificate
+            <ExternalLink aria-hidden="true" className="h-3.5 w-3.5" />
+            <span className="sr-only">(opens in a new tab)</span>
+          </a>
+        )}
       </div>
-      </SpotlightCard>
-    </Reveal>
+    </div>
   )
 }

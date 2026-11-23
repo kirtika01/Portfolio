@@ -36,6 +36,20 @@ occurrences across `app/` and `components/`. A full retheme is therefore:
 A scripted version of exactly this lives in the session history; the mapping approach is
 a regex over `\b(purple|fuchsia|pink)-(\d{2,3})\b` plus a hex table.
 
+## Gold highlights and component classes (2026-11 redesign)
+
+The redesign added a lighter gold, `#cba982` (with `#e0c9ad` and `#ecdcc6` for its hover
+and highlight shades), for eyebrows, icons and the `.btn-primary` gradient. Shared
+classes in `globals.css`:
+
+- `.btn-primary` is a gold gradient with **dark text (`#140d07`)**. White on gold fails
+  contrast, so keep the text dark.
+- `.btn-secondary` is outlined, with a coffee border and white text.
+- `.surface` is the plain card: near-black, hairline border, rounded-2xl.
+- `.chip` is the small tag used for tech stacks.
+
+Text contrast floor on black: `stone-400` for meta text, `stone-300` for body text.
+
 ## Deliberate exceptions
 
 - **Green status colours stay green.** `Available for work`, the `Live` badge and the

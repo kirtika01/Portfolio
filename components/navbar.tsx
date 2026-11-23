@@ -1,26 +1,23 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect } from "react"
-import Link from "next/link"
+import { useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence, useScroll, useSpring } from "framer-motion"
-import { Menu, X, Github, Linkedin } from "lucide-react"
+import { Menu, X, Github, Linkedin, ArrowUpRight } from "lucide-react"
+import { LINKS, NAV_LINKS } from "@/lib/site"
 
-const navLinks = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Services", href: "#services" },
-  { name: "Work", href: "#work" },
-  { name: "Achievements", href: "#achievements" },
-  { name: "Publications", href: "#publications" },
-  { name: "Contact", href: "#contact" },
-]
-
+/**
+ * Sticky home-page navigation.
+ *
+ * Every item is a plain in-page anchor (`#about`, `#work`, …); the smooth
+ * scroll itself is handled once, globally, in components/smooth-scroll.tsx.
+ * The mobile menu closes on link click, on Escape, and when the viewport
+ * grows past the mobile breakpoint.
+ */
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [active, setActive] = useState("home")
+  const toggleRef = useRef<HTMLButtonElement>(null)
 
   const { scrollYProgress } = useScroll()
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 25, restDelta: 0.001 })
@@ -28,13 +25,12 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10)
     handleScroll()
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  // Track which section is currently in view to highlight the matching nav link.
+  // Highlight the link for the section currently in the middle of the screen.
   useEffect(() => {
-    const ids = navLinks.map((l) => l.href.replace("#", ""))
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -43,193 +39,210 @@ export default function Navbar() {
       },
       { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
     )
-    ids.forEach((id) => {
+    NAV_LINKS.forEach(({ id }) => {
       const el = document.getElementById(id)
       if (el) observer.observe(el)
     })
     return () => observer.disconnect()
   }, [])
 
-  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    e.preventDefault()
-    const targetId = href.replace("#", "")
-    const elem = document.getElementById(targetId)
-    elem?.scrollIntoView({ behavior: "smooth" })
-    setIsOpen(false)
-  }
+  // Mobile menu: lock page scroll, close on Escape, close if resized to desktop.
+  useEffect(() => {
+    if (!isOpen) return
+    const { overflow } = document.body.style
+    document.body.style.overflow = "hidden"
 
-  const iconVariants = {
-    initial: { scale: 1 },
-    hover: { scale: 1.2, rotate: 5 },
-  }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false)
+        toggleRef.current?.focus()
+      }
+    }
+    const mq = window.matchMedia("(min-width: 1024px)")
+    const onMq = () => mq.matches && setIsOpen(false)
+
+    window.addEventListener("keydown", onKey)
+    mq.addEventListener("change", onMq)
+    return () => {
+      document.body.style.overflow = overflow
+      window.removeEventListener("keydown", onKey)
+      mq.removeEventListener("change", onMq)
+    }
+  }, [isOpen])
+
+  const close = () => setIsOpen(false)
 
   return (
-    <motion.nav
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? "glass-strong py-3 shadow-lg shadow-black/30" : "bg-transparent py-5"
+      className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
+        scrolled || isOpen ? "glass-strong py-3 shadow-lg shadow-black/30" : "bg-transparent py-5"
       }`}
     >
       {/* Scroll progress bar */}
       <motion.div
+        aria-hidden="true"
         style={{ scaleX: progress }}
         className="absolute bottom-0 left-0 right-0 h-px origin-left bg-gradient-to-r from-[#b98a5e] via-[#a9764c] to-[#8a5a34]"
       />
 
-      <div className="container mx-auto flex items-center justify-between px-4 md:px-8">
-        <Link
-          href="#home"
-          className="font-display text-2xl font-bold text-white"
-          onClick={(e) => scrollToSection(e, "#home")}
-        >
-          Kirtika<span className="text-[#8a5a34]">.</span>
-        </Link>
+      <nav aria-label="Main" className="container mx-auto flex items-center justify-between gap-4 px-4 md:px-8">
+        <a href="#home" onClick={close} className="relative z-50 font-display text-2xl font-bold text-white">
+          Kirtika<span className="text-[#b98a5e]">.</span>
+          <span className="sr-only"> — back to top</span>
+        </a>
 
-        {/* Desktop Navigation */}
-        <div className="hidden items-center md:flex">
-          <div className="flex items-center gap-1">
-            {navLinks.map((link) => {
-              const id = link.href.replace("#", "")
-              const isActive = active === id
+        {/* Desktop navigation */}
+        <div className="hidden items-center gap-6 lg:flex">
+          <ul className="flex items-center gap-1">
+            {NAV_LINKS.map((link) => {
+              const isActive = active === link.id
               return (
-                <Link
-                  key={link.name}
-                  href={link.href}
-                  onClick={(e) => scrollToSection(e, link.href)}
-                  className={`relative rounded-full px-3 py-1.5 text-sm transition-colors duration-300 ${
-                    isActive ? "text-white" : "text-stone-400 hover:text-white"
-                  }`}
-                >
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-active"
-                      transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                      className="absolute inset-0 -z-10 rounded-full bg-white/10 ring-1 ring-white/10"
-                    />
-                  )}
-                  {link.name}
-                </Link>
+                <li key={link.id}>
+                  <a
+                    href={`#${link.id}`}
+                    aria-current={isActive ? "location" : undefined}
+                    className={`relative block rounded-full px-3.5 py-1.5 text-sm transition-colors duration-300 ${
+                      isActive ? "text-white" : "text-stone-300 hover:text-white"
+                    }`}
+                  >
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        className="absolute inset-0 -z-10 rounded-full bg-white/10 ring-1 ring-white/10"
+                      />
+                    )}
+                    {link.label}
+                  </a>
+                </li>
               )
             })}
-          </div>
+          </ul>
 
-          <div className="ml-6 flex items-center gap-4">
-            <motion.a
-              href="https://github.com/kirtika01"
+          <div className="flex items-center gap-3">
+            <a
+              href={LINKS.github}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-400 transition-colors duration-300 hover:text-white"
-              aria-label="GitHub"
-              variants={iconVariants}
-              initial="initial"
-              whileHover="hover"
+              className="rounded-full p-1.5 text-stone-300 transition-colors duration-300 hover:text-white"
+              aria-label="GitHub (opens in a new tab)"
             >
-              <Github size={22} />
-            </motion.a>
-            <motion.a
-              href="https://www.linkedin.com/in/g-kirtika-426687254/"
+              <Github size={20} aria-hidden="true" />
+            </a>
+            <a
+              href={LINKS.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-stone-400 transition-colors duration-300 hover:text-white"
-              aria-label="LinkedIn"
-              variants={iconVariants}
-              initial="initial"
-              whileHover="hover"
+              className="rounded-full p-1.5 text-stone-300 transition-colors duration-300 hover:text-white"
+              aria-label="LinkedIn (opens in a new tab)"
             >
-              <Linkedin size={22} />
-            </motion.a>
+              <Linkedin size={20} aria-hidden="true" />
+            </a>
+            <LetsTalk />
           </div>
         </div>
 
-        {/* Mobile Navigation Toggle */}
-        <div className="flex items-center gap-4 md:hidden">
-          <motion.a
-            href="https://github.com/kirtika01"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-stone-300 transition-colors duration-300 hover:text-white"
-            aria-label="GitHub"
-            variants={iconVariants}
-            initial="initial"
-            whileHover="hover"
-          >
-            <Github size={22} />
-          </motion.a>
+        {/* Mobile: Let's Talk stays visible, plus the menu toggle */}
+        <div className="relative z-50 flex items-center gap-3 lg:hidden">
+          <LetsTalk onClick={close} compact />
           <button
-            className="relative z-50 text-white focus:outline-none"
-            onClick={() => setIsOpen(!isOpen)}
+            ref={toggleRef}
+            type="button"
+            className="rounded-full p-2 text-white"
+            onClick={() => setIsOpen((v) => !v)}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
-            {isOpen ? <X size={26} /> : <Menu size={26} />}
+            {isOpen ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
           </button>
         </div>
-      </div>
+      </nav>
 
-      {/* Full-screen Mobile Navigation Menu */}
+      {/* Full-screen mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-menu"
             initial={{ opacity: 0, clipPath: "circle(0% at calc(100% - 2rem) 2rem)" }}
             animate={{ opacity: 1, clipPath: "circle(150% at calc(100% - 2rem) 2rem)" }}
             exit={{ opacity: 0, clipPath: "circle(0% at calc(100% - 2rem) 2rem)" }}
-            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-[#070503]/95 backdrop-blur-xl md:hidden"
+            transition={{ duration: 0.45, ease: [0.4, 0, 0.2, 1] }}
+            className="fixed inset-0 z-40 flex h-[100dvh] flex-col items-center justify-center bg-[#070503]/95 backdrop-blur-xl lg:hidden"
           >
-            <div className="flex flex-col items-center gap-6">
-              {navLinks.map((link, index) => {
-                const isActive = active === link.href.replace("#", "")
+            <ul className="flex flex-col items-center gap-5">
+              {NAV_LINKS.map((link, index) => {
+                const isActive = active === link.id
                 return (
-                  <motion.div
-                    key={link.name}
+                  <motion.li
+                    key={link.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
-                    transition={{ delay: 0.15 + index * 0.06 }}
+                    transition={{ delay: 0.12 + index * 0.05 }}
                   >
-                    <Link
-                      href={link.href}
-                      onClick={(e) => scrollToSection(e, link.href)}
+                    <a
+                      href={`#${link.id}`}
+                      onClick={close}
+                      aria-current={isActive ? "location" : undefined}
                       className={`font-display text-3xl font-semibold transition-colors ${
                         isActive ? "text-gradient-static" : "text-stone-300 hover:text-white"
                       }`}
                     >
-                      {link.name}
-                    </Link>
-                  </motion.div>
+                      {link.label}
+                    </a>
+                  </motion.li>
                 )
               })}
-            </div>
+            </ul>
 
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
+              transition={{ delay: 0.5 }}
               className="mt-12 flex items-center gap-6"
             >
               <a
-                href="https://github.com/kirtika01"
+                href={LINKS.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="GitHub"
-                className="text-stone-400 hover:text-white"
+                aria-label="GitHub (opens in a new tab)"
+                className="text-stone-300 hover:text-white"
               >
-                <Github size={26} />
+                <Github size={26} aria-hidden="true" />
               </a>
               <a
-                href="https://www.linkedin.com/in/g-kirtika-426687254/"
+                href={LINKS.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                aria-label="LinkedIn"
-                className="text-stone-400 hover:text-white"
+                aria-label="LinkedIn (opens in a new tab)"
+                className="text-stone-300 hover:text-white"
               >
-                <Linkedin size={26} />
+                <Linkedin size={26} aria-hidden="true" />
               </a>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </motion.header>
+  )
+}
+
+function LetsTalk({ onClick, compact = false }: { onClick?: () => void; compact?: boolean }) {
+  return (
+    <a
+      href="#contact"
+      onClick={onClick}
+      className={`btn-primary group text-sm ${compact ? "px-4 py-2" : "px-5 py-2"}`}
+    >
+      Let&apos;s Talk
+      <ArrowUpRight
+        aria-hidden="true"
+        className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+      />
+    </a>
   )
 }

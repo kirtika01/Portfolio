@@ -1,79 +1,90 @@
 # PROJECT SUMMARY — read me first (2 min)
 
-> The fastest way to orient. **Last synced:** 2026-08-20.
+> The fastest way to orient. **Last synced:** 2026-11-23 (client-acquisition redesign).
 
 ## In one paragraph
 
-This is **G. Kirtika's personal portfolio** — a single-page Next.js 14 App Router site
-(dark theme, coffee-on-black) with a set of prerendered project detail pages. The home
-page stacks hero → about → services → work → achievements → publications → contact.
-Every project has its own page at `/projects/<slug>`, generated from one data file.
-Motion runs on GSAP ScrollTrigger + Lenis smooth scroll, all gated behind a single
-`prefers-reduced-motion` check. The contact form posts to FormSubmit (no backend).
-Deployed on Vercel from `main`; the domain `kirtikadev.in` is being pointed at it.
+This is **G. Kirtika's portfolio**, built to win freelance and contract work from
+international clients. It is a single-page Next.js 14 App Router site (dark, coffee/gold
+on black) plus a prerendered detail page per project. The home page runs hero → about →
+services → projects → experience → skills → why work with me → process → research &
+achievements → contact → footer. Projects live at `/projects/<slug>`, generated from one
+data file. Motion uses GSAP ScrollTrigger and Lenis, and a single
+`prefers-reduced-motion` check gates all of it. The contact form posts to one API route,
+`/api/contact`, which emails the enquiry through Resend. Vercel deploys from `main` to `kirtikadev.in`.
 
 ## Repo layout
 
 ```
 Portfolio/
 ├── app/
-│   ├── page.tsx              home page — every section lives here
-│   ├── layout.tsx            fonts, metadata, SmoothScroll, background
-│   ├── globals.css           theme variables + utility classes
+│   ├── page.tsx              home page: a server component that composes the sections
+│   ├── layout.tsx            fonts, metadata, JSON-LD, pre-paint script, skip link
+│   ├── globals.css           theme variables, .surface / .btn-* / .chip utilities
+│   ├── opengraph-image.tsx   generated 1200×630 social card (twitter-image re-exports it)
+│   ├── icon.svg              "K" favicon
 │   ├── projects/[slug]/      prerendered project detail pages
-│   ├── thankyou/             contact form redirect target
-│   ├── sitemap.ts robots.ts  SEO, both hardcode the domain
-├── components/               31 components + components/ui (50 shadcn files)
+│   ├── thankyou/             target of the form's no-JS fallback
+│   ├── api/contact/          contact-form route → Resend (needs RESEND_API_KEY)
+│   ├── sitemap.ts robots.ts  both read SITE_URL from lib/site.ts
+├── components/               one file per home-page section, plus shared pieces
 ├── lib/
-│   ├── projectsData.ts       ← ALL project content lives here
+│   ├── projectsData.ts       ← ALL project content
+│   ├── content.ts            ← about, experience, skills, services, why, process, achievements
+│   ├── site.ts               ← name, role, links, form endpoint, nav, availability flag
+│   ├── contact.ts            contact-form validation, shared by the form and the API route
 │   ├── motion.ts             GSAP registration + reduced-motion check
 │   └── utils.ts              cn() helper
-├── hooks/                    use-parallax, use-mobile, use-toast, useThree
+├── hooks/                    use-parallax, use-mobile, use-toast, useThree (dead)
 └── .ai-brain/                ← this knowledge base
 ```
 
-## The 8 things to know before editing
+## The 9 things to know before editing
 
-1. **All project content is in [`lib/projectsData.ts`](../lib/projectsData.ts).** One
-   array of objects. Adding a project = adding an object. Nothing else to touch.
-   See [CONTENT.md](CONTENT.md).
-2. **The home page is one big file** — `app/page.tsx` holds every section inline except
-   About, Services, Contact and the project cards, which are components.
-3. **Theme is coffee on black**, driven by four CSS variables at the top of
-   `app/globals.css` plus Tailwind arbitrary-value classes. See [THEME.md](THEME.md).
-4. **`Reveal` is the site-wide scroll animation** (GSAP ScrollTrigger, fires once).
-   It renders children at `opacity: 0` until GSAP takes over — so if reveals ever break,
-   the page looks *blank*, not unanimated. See [MOTION.md](MOTION.md).
-5. **Never run `next build` while the dev server is running.** They share `.next` and
-   dev/prod chunk names differ — the dev server then 500s with `Cannot find module
-   './xxx.js'`. See [GOTCHAS.md](GOTCHAS.md).
-6. **`pnpm dev` fails** on this repo (ignored build scripts). Use
-   `./node_modules/.bin/next dev` or run `pnpm approve-builds` once.
-7. **The GitHub button on a project page only renders if `githubUrl` exists**, and the
-   live button only if `liveUrl` exists, the PyPI button only if `pypiUrl` exists. This is
-   deliberate — never show a dead button.
-8. **TypeScript and ESLint errors do not fail the build** (`next.config.mjs` ignores
-   both). Some dead three.js/tsparticles files have type errors permanently.
+1. **Content is data.** Projects are in [`lib/projectsData.ts`](../lib/projectsData.ts),
+   every other home-page section is in [`lib/content.ts`](../lib/content.ts), and links
+   and contact details are in [`lib/site.ts`](../lib/site.ts). See [CONTENT.md](CONTENT.md).
+2. **Nothing invented.** The brief behind the redesign said no fake testimonials, metrics,
+   clients or links. Where a fact is missing, the project carries `needsReview`, which
+   shows a dashed chip **in development only**.
+3. **Theme is coffee/gold on black.** The tokens are in `app/globals.css`, and primary
+   buttons are `.btn-primary`, which puts dark text on a gold gradient for contrast.
+   See [THEME.md](THEME.md).
+4. **`Reveal` renders children at `opacity: 0`** until GSAP reveals them. A broken reveal
+   shows up as a *blank* section. See [MOTION.md](MOTION.md).
+5. **The intro is an overlay, not a gate.** The page is server-rendered underneath, and an
+   inline script in `layout.tsx` hides the intro before first paint if it has already
+   played or the visitor prefers reduced motion.
+6. **Never run `next build` while the dev server is running.** See [GOTCHAS.md](GOTCHAS.md).
+7. **`pnpm dev` fails.** Use `./node_modules/.bin/next dev`.
+8. **Project buttons are conditional.** GitHub, Live and PyPI each render only when their
+   URL exists, so the site never shows a dead button.
+9. **Type and lint errors don't fail the build.** There is also no ESLint config, so
+   `next lint` only starts its setup wizard. Run `tsc --noEmit` yourself; the only errors
+   it reports are in dead three.js files.
 
 ## Where to look
 
 | I want to… | Go to |
 |---|---|
-| Add or edit a project | [CONTENT.md](CONTENT.md) → `lib/projectsData.ts` |
+| Add or edit a project, service, skill, job, award | [CONTENT.md](CONTENT.md) |
 | Change colours | [THEME.md](THEME.md) |
-| Understand the animations | [MOTION.md](MOTION.md) |
-| Deploy, or set up the domain | [DEPLOYMENT.md](DEPLOYMENT.md) |
+| Understand the animations / intro | [MOTION.md](MOTION.md) |
+| Deploy, domain, contact form, scheduling link | [DEPLOYMENT.md](DEPLOYMENT.md) |
 | Know why something is built this way | [DECISIONS.md](DECISIONS.md) |
 | Know what's broken or fragile | [GOTCHAS.md](GOTCHAS.md) |
 | Find a component | [COMPONENTS.md](COMPONENTS.md) |
 
 ## Personal details used across the site
 
-| Field | Value | Where |
-|---|---|---|
-| Email | gkirtika01@gmail.com | contact-section, contact-email, FormSubmit target |
-| Phone / WhatsApp | +91 93401 60822 (`919340160822`) | contact-section |
-| GitHub | github.com/kirtika01 | navbar, footer, project detail header |
-| LinkedIn | linkedin.com/in/g-kirtika-426687254 | navbar, footer, project detail header |
-| CV | Google Drive link | contact-section |
-| Domain | kirtikadev.in | layout metadata, sitemap, robots |
+All of these are in `lib/site.ts` (`SITE` and `LINKS`). Change them there and nowhere else.
+
+| Field | Value |
+|---|---|
+| Email / contact-form recipient | gkirtika01@gmail.com |
+| WhatsApp | +91 93401 60822 (`919340160822`) |
+| GitHub | github.com/kirtika01 |
+| LinkedIn | linkedin.com/in/g-kirtika-426687254 |
+| Resume | Google Drive link (view + direct download) |
+| Domain | kirtikadev.in (`SITE_URL`) |
+| Scheduling link | `SCHEDULING_URL`, **empty** until the owner has one |
