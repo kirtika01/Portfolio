@@ -50,7 +50,7 @@ export const AVAILABLE_FOR_PROJECTS = true
  */
 export const SCHEDULING_URL = ""
 
-/** Contact-form endpoint: our own route, which emails via Resend. See .ai-brain/DEPLOYMENT.md. */
+/** Contact-form endpoint: our own route, which emails via Resend (or FormSubmit without a key). See .ai-brain/DEPLOYMENT.md. */
 export const CONTACT_ENDPOINT = "/api/contact"
 
 /** Options for "What do you need help with?" — the services CTAs preselect these. */

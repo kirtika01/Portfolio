@@ -1,11 +1,16 @@
 /**
- * POST /api/contact — emails a project enquiry to the site owner through Resend.
+ * POST /api/contact — emails a project enquiry to the site owner.
+ *
+ * Sender: Resend when RESEND_API_KEY is set; otherwise FormSubmit
+ * (formsubmit.co, no key, the service the old site used). FormSubmit needs a
+ * one-time "Activate Form" click in the inbox the first time it is used for an
+ * address + site; until then it answers "needs Activation" and nothing is sent.
  *
  * Accepts JSON (the normal fetch from the form) or a native form post (the
  * no-JavaScript fallback, which is redirected to /thankyou on success).
  *
  * Env (set in .env.local and in Vercel → Settings → Environment Variables):
- *   RESEND_API_KEY      required. Never commit it.
+ *   RESEND_API_KEY      optional (FormSubmit is used without it). Never commit it.
  *   CONTACT_FROM_EMAIL  sender on a domain verified in Resend,
  *                       e.g. "Portfolio Enquiries <enquiries@kirtikadev.in>".
  *                       Until the domain is verified, leave it unset: Resend's
@@ -23,12 +28,13 @@ import {
   type ContactFields,
   type ContactResponse,
 } from "@/lib/contact"
-import { LINKS } from "@/lib/site"
+import { LINKS, SITE_URL } from "@/lib/site"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
 
 const RESEND_URL = "https://api.resend.com/emails"
+const FORMSUBMIT_URL = "https://formsubmit.co/ajax"
 const DEFAULT_FROM = "Portfolio Enquiries <onboarding@resend.dev>"
 const SEND_TIMEOUT_MS = 8000
 
@@ -87,12 +93,6 @@ export async function POST(req: NextRequest) {
     return reply({ ok: false, error: "Too many enquiries from this connection. Please try again later." }, 429)
   }
 
-  const apiKey = process.env.RESEND_API_KEY
-  if (!apiKey) {
-    console.error("[contact] RESEND_API_KEY is not set; enquiry not sent.")
-    return reply({ ok: false, error: "The contact form isn't set up yet." }, 503)
-  }
-
   const f = {
     name: oneLine(fields.name),
     email: oneLine(fields.email),
@@ -113,30 +113,67 @@ export async function POST(req: NextRequest) {
     .map(([k, v]) => `<tr><td style="color:#666;vertical-align:top">${k}</td><td><strong>${escapeHtml(v)}</strong></td></tr>`)
     .join("")}</table><p style="font:14px/1.5 sans-serif;white-space:pre-wrap">${escapeHtml(f.details)}</p><p style="font:12px sans-serif;color:#888">Sent from the contact form on kirtikadev.in. Reply to answer ${escapeHtml(f.name)} directly.</p>`
 
+  const to = process.env.CONTACT_TO_EMAIL || LINKS.email
+  const subject = `Project enquiry: ${f.service} — ${f.name}`
+  const apiKey = process.env.RESEND_API_KEY
+
   try {
-    const res = await fetch(RESEND_URL, {
-      method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        from: process.env.CONTACT_FROM_EMAIL || DEFAULT_FROM,
-        to: [process.env.CONTACT_TO_EMAIL || LINKS.email],
-        reply_to: f.email,
-        subject: `Project enquiry: ${f.service} — ${f.name}`,
-        text,
-        html,
-      }),
-      signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
-    })
-    if (!res.ok) {
-      console.error(`[contact] Resend answered ${res.status}: ${await res.text().catch(() => "")}`)
-      return reply({ ok: false, error: "The email service couldn't send your enquiry." }, 502)
-    }
+    const sent = apiKey
+      ? await sendViaResend(apiKey, { to, subject, replyTo: f.email, text, html })
+      : await sendViaFormSubmit({ to, subject, replyTo: f.email, rows, details: f.details })
+    if (!sent) return reply({ ok: false, error: "The email service couldn't send your enquiry." }, 502)
   } catch (err) {
-    console.error("[contact] Resend request failed:", err)
+    console.error("[contact] Send request failed:", err)
     return reply({ ok: false, error: "The email service didn't respond in time." }, 504)
   }
 
   return reply({ ok: true }, 200)
+}
+
+type Mail = { to: string; subject: string; replyTo: string }
+
+async function sendViaResend(apiKey: string, m: Mail & { text: string; html: string }) {
+  const res = await fetch(RESEND_URL, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: process.env.CONTACT_FROM_EMAIL || DEFAULT_FROM,
+      to: [m.to],
+      reply_to: m.replyTo,
+      subject: m.subject,
+      text: m.text,
+      html: m.html,
+    }),
+    signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
+  })
+  if (!res.ok) console.error(`[contact] Resend answered ${res.status}: ${await res.text().catch(() => "")}`)
+  return res.ok
+}
+
+/**
+ * FormSubmit's AJAX endpoint. It answers 200 even on failure, so read
+ * `success`. Its activation is tied to the site, so send the live site as the
+ * Referer/Origin (Node's fetch lets a server set both).
+ */
+async function sendViaFormSubmit(m: Mail & { rows: [string, string][]; details: string }) {
+  const site = SITE_URL.replace(/\/$/, "")
+  const res = await fetch(`${FORMSUBMIT_URL}/${encodeURIComponent(m.to)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json", Origin: site, Referer: `${site}/` },
+    body: JSON.stringify({
+      _subject: m.subject,
+      _replyto: m.replyTo,
+      _template: "table",
+      _captcha: "false",
+      ...Object.fromEntries(m.rows),
+      "Project details": m.details,
+    }),
+    signal: AbortSignal.timeout(SEND_TIMEOUT_MS),
+  })
+  const data = (await res.json().catch(() => null)) as { success?: string | boolean; message?: string } | null
+  const ok = res.ok && String(data?.success) === "true"
+  if (!ok) console.error(`[contact] FormSubmit answered ${res.status}: ${data?.message ?? ""}`)
+  return ok
 }
 
 /** Shown only to visitors without JavaScript whose enquiry failed. */

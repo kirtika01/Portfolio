@@ -55,16 +55,28 @@ domain rather than serving both.
 
 ## The contact form
 
-**Our own API route sends it through [Resend](https://resend.com).** It replaced
-FormSubmit on 2026-11-23, which was slow and whose emails landed in spam.
+**Our own API route sends it: through [Resend](https://resend.com) when
+`RESEND_API_KEY` is set, otherwise through FormSubmit** (`formsubmit.co/ajax`, no key).
+Resend replaced FormSubmit as the main sender on 2026-11-23 (FormSubmit was slow and its
+emails landed in spam). FormSubmit came back as the fallback on 2026-11-24, after the
+live site, still without a Resend key, showed visitors "The contact form isn't set up
+yet."
+
+- **FormSubmit needs a one-time activation:** the first send for an address + site
+  answers `"This form needs Activation"` and emails an *Activate Form* link to the inbox.
+  Nothing is delivered until that link is clicked. The route sends `Origin`/`Referer` =
+  `SITE_URL`, so the activation for kirtikadev.in covers local tests too. It answers
+  HTTP 200 even on failure, so the route checks `success === "true"`.
 
 - `components/contact-section.tsx` validates, then `fetch`es JSON to `/api/contact`
   (`CONTACT_ENDPOINT` in `lib/site.ts`). It shows "Enquiry sent" only when the reply is
-  `{ ok: true }`. Server field errors land on their fields; any other failure shows the
-  message and a mailto fallback, and the visitor's input is kept.
+  `{ ok: true }`. Server field errors land on their fields. Any other failure shows no red
+  error: a calm "Let's send this by email instead" box with an *Open in my email app*
+  button whose mailto is prefilled with everything they typed (`mailtoFor`). The input
+  is kept.
 - `app/api/contact/route.ts` re-validates with the same rules (`lib/contact.ts`, shared
   by both sides; also caps field lengths), then POSTs to Resend's REST API (no SDK
-  dependency) with an 8 s timeout. The email goes to the owner with `reply_to` set to
+  dependency), or to FormSubmit without a key, with an 8 s timeout. The email goes to the owner with `reply_to` set to
   the visitor, so pressing Reply answers them.
 - **Spam protection:** a hidden `_honey` field and a 2.5 s minimum fill time, checked in
   the browser and again on the server (the client sends `elapsedMs`). A tripped trap
@@ -74,7 +86,7 @@ FormSubmit on 2026-11-23, which was slow and whose emails landed in spam.
   anyone use the site to send mail to strangers, which hurts the domain's reputation.
 - **No-JS fallback:** the form's `action` is `/api/contact`. A native form post is
   redirected (303) to `/thankyou` on success, or gets a small HTML error page.
-- Errors from Resend are logged server-side (`[contact] …` in Vercel's function logs)
+- Errors from Resend or FormSubmit are logged server-side (`[contact] …` in Vercel's function logs)
   and never shown to visitors.
 
 ### Environment variables
@@ -85,7 +97,7 @@ a key.**
 
 | Var | |
 |---|---|
-| `RESEND_API_KEY` | Required. Without it the route answers 503 "The contact form isn't set up yet." |
+| `RESEND_API_KEY` | Optional. Without it the route sends through FormSubmit instead (needs its one-time activation). |
 | `CONTACT_FROM_EMAIL` | Sender on the verified domain, e.g. `Portfolio Enquiries <enquiries@kirtikadev.in>`. Unset = `onboarding@resend.dev`, which Resend only delivers to the email that owns the Resend account. |
 | `CONTACT_TO_EMAIL` | Optional. Defaults to `LINKS.email`. |
 

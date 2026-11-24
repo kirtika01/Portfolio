@@ -66,11 +66,27 @@ const DETAILS = [
 
 type Status = "idle" | "submitting" | "success" | "error"
 
+/** A mailto link carrying the visitor's enquiry, for when the form can't send. */
+function mailtoFor(f: Fields) {
+  const subject = `Project enquiry: ${f.service || "New project"}${f.name ? ` — ${f.name}` : ""}`
+  const facts: [string, string][] = [
+    ["Name", f.name],
+    ["Email", f.email],
+    ["Company / website", f.company],
+    ["Needs help with", f.service],
+    ["Budget", f.budget],
+  ]
+  const body = `${facts
+    .filter(([, v]) => v.trim())
+    .map(([k, v]) => `${k}: ${v.trim()}`)
+    .join("\n")}\n\n${f.details.trim()}`
+  return `mailto:${LINKS.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+}
+
 function ProjectEnquiryForm() {
   const [fields, setFields] = useState<Fields>(EMPTY)
   const [errors, setErrors] = useState<FieldErrors>({})
   const [status, setStatus] = useState<Status>("idle")
-  const [serverMessage, setServerMessage] = useState("")
   const honeypot = useRef<HTMLInputElement>(null)
   const shownAt = useRef(0)
   const formRef = useRef<HTMLFormElement>(null)
@@ -118,12 +134,10 @@ function ProjectEnquiryForm() {
     // Spam traps: a filled honeypot or an instant submit. Nothing is sent.
     if (honeypot.current?.value || Date.now() - shownAt.current < MIN_FILL_MS) {
       setStatus("error")
-      setServerMessage("Something went wrong. Please wait a moment and try again.")
       return
     }
 
     setStatus("submitting")
-    setServerMessage("")
     try {
       const res = await fetch(CONTACT_ENDPOINT, {
         method: "POST",
@@ -151,8 +165,8 @@ function ProjectEnquiryForm() {
       setFields(EMPTY)
       setErrors({})
     } catch (err) {
+      console.error("[contact] Enquiry not sent:", err)
       setStatus("error")
-      setServerMessage(err instanceof TypeError ? "The network request failed. Check your connection." : err instanceof Error ? err.message : "")
     }
   }
 
@@ -302,24 +316,30 @@ function ProjectEnquiryForm() {
         <input ref={honeypot} id="cf-honey" type="text" name="_honey" tabIndex={-1} autoComplete="off" />
       </div>
 
+      {/* If sending fails, don't show a red error: hand the visitor an email
+          with their message already written, so nothing they typed is lost. */}
       {status === "error" && (
         <div
           ref={statusRef}
           tabIndex={-1}
-          role="alert"
-          className="flex gap-3 rounded-xl border border-red-400/30 bg-red-500/10 p-4 text-sm text-red-100 outline-none"
+          role="status"
+          className="flex gap-3 rounded-xl border border-[#cba982]/30 bg-[#b98a5e]/10 p-4 text-sm text-stone-200 outline-none"
         >
-          <CircleAlert aria-hidden="true" className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-300" />
+          <Mail aria-hidden="true" className="mt-0.5 h-5 w-5 flex-shrink-0 text-[#cba982]" />
           <div>
-            <p className="font-medium">Your enquiry couldn&apos;t be sent.</p>
-            <p className="mt-1 text-red-100/90">
-              {serverMessage && <span className="block">{serverMessage}</span>}
-              Please try again, or email me directly at{" "}
+            <p className="font-medium text-white">Let&apos;s send this by email instead.</p>
+            <p className="mt-1 text-stone-300">
+              The form didn&apos;t go through just now, but your message is ready to send from your email app, or
+              write to me at{" "}
               <a href={`mailto:${LINKS.email}`} className="font-medium text-white underline underline-offset-2">
                 {LINKS.email}
               </a>
               .
             </p>
+            <a href={mailtoFor(fields)} className="btn-secondary mt-3 inline-flex px-4 py-2 text-sm">
+              <Mail aria-hidden="true" className="h-4 w-4" />
+              Open in my email app
+            </a>
           </div>
         </div>
       )}

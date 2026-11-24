@@ -11,7 +11,7 @@ services → projects → experience → skills → why work with me → process
 achievements → contact → footer. Projects live at `/projects/<slug>`, generated from one
 data file. Motion uses GSAP ScrollTrigger and Lenis, and a single
 `prefers-reduced-motion` check gates all of it. The contact form posts to one API route,
-`/api/contact`, which emails the enquiry through Resend. Vercel deploys from `main` to `kirtikadev.in`.
+`/api/contact`, which emails the enquiry through Resend (FormSubmit when no key is set). Vercel deploys from `main` to `kirtikadev.in`.
 
 ## Repo layout
 
@@ -25,7 +25,7 @@ Portfolio/
 │   ├── icon.svg              "K" favicon
 │   ├── projects/[slug]/      prerendered project detail pages
 │   ├── thankyou/             target of the form's no-JS fallback
-│   ├── api/contact/          contact-form route → Resend (needs RESEND_API_KEY)
+│   ├── api/contact/          contact-form route → Resend, or FormSubmit without RESEND_API_KEY
 │   ├── sitemap.ts robots.ts  both read SITE_URL from lib/site.ts
 ├── components/               one file per home-page section, plus shared pieces
 ├── lib/
