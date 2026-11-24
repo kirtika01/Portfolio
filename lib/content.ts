@@ -70,7 +70,7 @@ export const EXPERIENCE: ExperienceEntry[] = [
     company: "Aashita Technosoft Pvt Ltd",
     title: "Senior AI Backend Developer",
     dates: "December 2025 – Present",
-    location: "Jaipur, Rajasthan, India",
+    location: "Jaipur, Rajasthan, India · On-site",
     type: "Full-time",
     current: true,
     points: [
@@ -317,11 +317,8 @@ export const PUBLICATION = {
  * Workshops — moved here from the old Services section.
  *
  * The three session recordings used to link to Google Drive, but those files
- * returned 404 when checked on 2026-11-23 (removed or no longer shared). Add a
- * `recordingUrl` back to an entry once the file is shared again; the link only
- * renders when the field is set.
- *   1A8re9M89Oi5NTKe1OuEi-94XFpeXYNIJ · 1ADs7119Nggv11O5zJhdb0pLqM8OHB1Vs ·
- *   1VKwigYXF96WIW7O1N_JxgPrMyeyBDCZD
+ * returned 404 on 2026-11-23. On 2026-11-24 the owner decided not to link
+ * recordings at all, so `recordingUrl` stays unset and no link renders.
  */
 export const TRAINING = {
   summary: "Trained 300+ teachers through structured AI training sessions.",
